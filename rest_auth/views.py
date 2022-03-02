@@ -1,7 +1,7 @@
 # -------------------
 # Python -> Imports
 # -------------------
-from django.http import HttpResponse
+from django.http import HttpRequest
 
 # ------------------------------
 # Local app -> Django Imports
@@ -41,7 +41,7 @@ class Konnichiwa(views.APIView):
     HOST_NAME = "127.0.0.1:8000/"
     BASE_URL = PROTOCOL + HOST_NAME
     
-    def get(self, request:HttpResponse) -> Response:
+    def get(self, request:HttpRequest) -> Response:
                 
         welcome_data = {
             "yoshi!": "If you made it here, I'm proud of you!",
@@ -384,7 +384,7 @@ class SuspendUserApiView(views.APIView):
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
         
-    def get(self, request:HttpResponse, username:str) -> Response:
+    def get(self, request:HttpRequest, username:str) -> Response:
         user = self.get_single_user(username=username)
         serializer = SuspendUserSerializer(user)
         
@@ -395,7 +395,7 @@ class SuspendUserApiView(views.APIView):
         )
         return Response(data=payload, status=status.HTTP_200_OK)
 
-    def put(self, request:HttpResponse, username:str) -> Response:
+    def put(self, request:HttpRequest, username:str) -> Response:
         user = self.get_single_user(username=username)
         serializer = SuspendUserSerializer(data=request.data, instance=user)
         
@@ -471,7 +471,7 @@ class ChangeUserPasswordAPIView(views.APIView):
             )
             return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
     
-    def get(self, request: HttpResponse, email:str) -> Response:
+    def get(self, request: HttpRequest, email:str) -> Response:
         user = self.get_current_user(email=email)
         serializer = UserSerializer(user)
         
@@ -482,7 +482,7 @@ class ChangeUserPasswordAPIView(views.APIView):
         )
         return Response(data=payload, status=status.HTTP_200_OK)
     
-    def put(self, request:HttpResponse, email:str) -> Response:
+    def put(self, request:HttpRequest, email:str) -> Response:
         
         # Get current user
         user = self.get_current_user(email=email)
