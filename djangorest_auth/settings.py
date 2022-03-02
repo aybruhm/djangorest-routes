@@ -49,7 +49,7 @@ LOCAL_APPS = [
 ]
 
 OWN_APPS = [
-    'auth',
+    'rest_auth',
 ]
 
 INSTALLED_APPS = LOCAL_APPS + OWN_APPS
