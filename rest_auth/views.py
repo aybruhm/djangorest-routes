@@ -1,13 +1,7 @@
 # -------------------
 # Python -> Imports
 # -------------------
-from django.http import HttpResponse, JsonResponse
-
-# -------------------------
-# Json Web Token Imports
-# -------------------------
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
+from django.http import HttpResponse
 
 # ------------------------------
 # Local app -> Django Imports
@@ -32,12 +26,37 @@ from rest_api_payload import success_response, error_response
 
 from rest_auth.serializers import AuthUserSerializer, ChangeUserPasswordSerializer, EmptySerializer, \
     OTPSerializer, ResendOTPSerializer, SuspendUserSerializer, UserLoginSerializer, UserSerializer
-from rest_auth.utils import create_user_account, generate_access_token, generate_refresh_token, has_controller_perm_func, send_html_to_email
+from rest_auth.utils import create_user_account, generate_access_token, \
+    generate_refresh_token, has_controller_perm_func, send_html_to_email
 from rest_auth.otp_verifications import OTPVerification
 
 
 otp_verify = OTPVerification()
 User = get_user_model()
+
+
+class Konnichiwa(views.APIView):
+    
+    PROTOCOL = "http://"
+    HOST_NAME = "127.0.0.1:8000/"
+    BASE_URL = PROTOCOL + HOST_NAME
+    
+    def get(self, request:HttpResponse) -> Response:
+                
+        welcome_data = {
+            "yoshi!": "If you made it here, I'm proud of you!",
+            "message": "I'd love to let you access all this endpoint without being an otaku, but unfortunately, you just have to be one! Quickly register, login to access all the endpoints!",
+            "routes": {
+                "register": self.BASE_URL + "rest_auth/register/",
+                "login": self.BASE_URL + "rest_auth/login/",
+                "change_password": self.BASE_URL + "rest_auth/change_password/<str:email>/",
+                "reset_password": self.BASE_URL + "rest_auth/reset_password",
+                "confirm_otp": self.BASE_URL + "rest_auth/confirm_otp/",
+                "resend_otp_code": self.BASE_URL + "rest_auth/resend_otp_code/",
+                "suspend_user": self.BASE_URL + "rest_auth/suspend_user/<str:username>/"
+            }
+        }
+        return Response(data=welcome_data, status=status.HTTP_200_OK)
 
 
 class AuthViewSet(GenericViewSet):
@@ -353,7 +372,7 @@ class AuthViewSet(GenericViewSet):
 class SuspendUserApiView(views.APIView):
     permissions_classes = [IsAuthenticated]
     
-    def get_single_user(self, username:str):
+    def get_single_user(self, username:str) -> Response:
         
         try: 
             user = User.objects.get(is_active=True, username=username)
@@ -365,7 +384,7 @@ class SuspendUserApiView(views.APIView):
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
         
-    def get(self, request, username:str):
+    def get(self, request:HttpResponse, username:str) -> Response:
         user = self.get_single_user(username=username)
         serializer = SuspendUserSerializer(user)
         
@@ -376,7 +395,7 @@ class SuspendUserApiView(views.APIView):
         )
         return Response(data=payload, status=status.HTTP_200_OK)
 
-    def put(self, request, username:str):
+    def put(self, request:HttpResponse, username:str) -> Response:
         user = self.get_single_user(username=username)
         serializer = SuspendUserSerializer(data=request.data, instance=user)
         
@@ -440,7 +459,7 @@ class SuspendUserApiView(views.APIView):
 class ChangeUserPasswordAPIView(views.APIView):
     permissions_classes = [IsAuthenticated]
     
-    def get_current_user(self, email:str):
+    def get_current_user(self, email:str) -> Response:
         
         try:
             user = User.objects.get(is_active=True, email=email)
@@ -452,7 +471,7 @@ class ChangeUserPasswordAPIView(views.APIView):
             )
             return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
     
-    def get(self, request, email:str):
+    def get(self, request: HttpResponse, email:str) -> Response:
         user = self.get_current_user(email=email)
         serializer = UserSerializer(user)
         
