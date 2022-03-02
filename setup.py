@@ -12,7 +12,7 @@ setup(
     packages = ['djangorest_auth'],
     include_package_data = True,
     license = 'BSD License',
-    description = 'A simple Django Rest Authentication module',
+    description = 'Bootstrap your spa startup with this amazing django rest authentication reusable app',
     long_description = README,
     url = 'http://www.example.com/',
     author = 'Abram 🐼',
@@ -21,7 +21,7 @@ setup(
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License', # example license
+        'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
