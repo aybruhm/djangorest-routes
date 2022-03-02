@@ -2,11 +2,14 @@
 Django Rest Auth
 ===================
 
-A simple installable Django Rest Authentication package.
 
-Detailed documentation is in the "docs" directory.
 
-Quick start
+
+Abstract
+-----------
+Bootstrap your spa startup with this amazing django rest authentication reusable app.
+
+Quick Start
 -----------
 
 1. Add "djangorest_auth" to your INSTALLED_APPS setting like this::
