@@ -58,7 +58,7 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
 ]
 
-INSTALLED_APPS = LOCAL_APPS + OWN_APPS
+INSTALLED_APPS = LOCAL_APPS + OWN_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
