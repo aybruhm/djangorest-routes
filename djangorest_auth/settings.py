@@ -52,6 +52,12 @@ OWN_APPS = [
     'rest_auth',
 ]
 
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt",
+]
+
 INSTALLED_APPS = LOCAL_APPS + OWN_APPS
 
 MIDDLEWARE = [
