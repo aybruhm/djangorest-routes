@@ -30,10 +30,10 @@ from rest_framework.response import Response
 # -----------------------------------
 from rest_api_payload import success_response, error_response
 
-from djangorest_auth.auth.serializers import AuthUserSerializer, ChangeUserPasswordSerializer, EmptySerializer, \
+from auth.serializers import AuthUserSerializer, ChangeUserPasswordSerializer, EmptySerializer, \
     OTPSerializer, ResendOTPSerializer, SuspendUserSerializer, UserLoginSerializer, UserSerializer
-from djangorest_auth.auth.utils import create_user_account, generate_access_token, generate_refresh_token, has_controller_perm_func, send_html_to_email
-from djangorest_auth.auth.otp_verifications import OTPVerification
+from auth.utils import create_user_account, generate_access_token, generate_refresh_token, has_controller_perm_func, send_html_to_email
+from auth.otp_verifications import OTPVerification
 
 
 otp_verify = OTPVerification()
