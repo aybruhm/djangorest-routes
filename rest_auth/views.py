@@ -49,9 +49,7 @@ class Konnichiwa(views.APIView):
                 
         welcome_data = {
             "yoshi!": "If you made it here, I'm proud of you!",
-            "message": "I'd love to let you access all this endpoint without being an otaku, \
-                    but unfortunately, you just have to be one! Quickly register, \
-                        login to access all the endpoints!",
+            "message": "I'd love to let you access all this endpoint without being an otaku, but unfortunately, you just have to be one! Quickly register, login to access all the endpoints!",
             "routes": {
                 "register": self.BASE_URL + "rest_auth/register/",
                 "login": self.BASE_URL + "rest_auth/login/",
