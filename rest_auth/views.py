@@ -24,8 +24,12 @@ from rest_framework.response import Response
 # -----------------------------------
 from rest_api_payload import success_response, error_response
 
-from rest_auth.serializers import AuthUserSerializer, ChangeUserPasswordSerializer, EmptySerializer, \
-    OTPSerializer, ResendOTPSerializer, SuspendUserSerializer, UserLoginSerializer, UserSerializer
+from rest_auth.serializers import (
+    AuthUserSerializer, ChangeUserPasswordSerializer, 
+    EmptySerializer, \
+    OTPSerializer, ResendOTPSerializer,
+    SuspendUserSerializer, UserLoginSerializer, 
+    UserSerializer)
 from rest_auth.utils import create_user_account, generate_access_token, \
     generate_refresh_token, has_controller_perm_func, send_html_to_email
 from rest_auth.otp_verifications import OTPVerification
@@ -45,15 +49,18 @@ class Konnichiwa(views.APIView):
                 
         welcome_data = {
             "yoshi!": "If you made it here, I'm proud of you!",
-            "message": "I'd love to let you access all this endpoint without being an otaku, but unfortunately, you just have to be one! Quickly register, login to access all the endpoints!",
+            "message": "I'd love to let you access all this endpoint without being an otaku, \
+                    but unfortunately, you just have to be one! Quickly register, \
+                        login to access all the endpoints!",
             "routes": {
                 "register": self.BASE_URL + "rest_auth/register/",
                 "login": self.BASE_URL + "rest_auth/login/",
-                "change_password": self.BASE_URL + "rest_auth/change_password/<str:email>/",
-                "reset_password": self.BASE_URL + "rest_auth/reset_password",
                 "confirm_otp": self.BASE_URL + "rest_auth/confirm_otp/",
                 "resend_otp_code": self.BASE_URL + "rest_auth/resend_otp_code/",
-                "suspend_user": self.BASE_URL + "rest_auth/suspend_user/<str:username>/"
+                "logout": self.BASE_URL + "rest_auth/logout/",
+                "change_password": self.BASE_URL + "rest_auth/change_password/<str:email>/",
+                "reset_password": self.BASE_URL + "rest_auth/reset_password/<str:email>/",
+                "suspend_user": self.BASE_URL + "rest_auth/suspend_user/<str:email>/"
             }
         }
         return Response(data=welcome_data, status=status.HTTP_200_OK)
@@ -70,7 +77,7 @@ class AuthViewSet(GenericViewSet):
     }
 
     @action(methods=["GET", "POST"], detail=False)
-    def register(self, request):
+    def register(self, request: HttpRequest) -> Response:
         # ---------------------------------------
         # This API view creates a new user
         # ---------------------------------------
@@ -80,7 +87,7 @@ class AuthViewSet(GenericViewSet):
         data = AuthUserSerializer(user).data
 
         # -----------------------------------------------------
-        # Gets user's email address, username and first name
+        # Gets user's email address and first name
         # -----------------------------------------------------
         email = user.email
         first_name = user.firstname
@@ -115,7 +122,7 @@ class AuthViewSet(GenericViewSet):
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=["GET", "POST"], detail=False, permissions_classes=[AllowAny])
-    def login(self, request):
+    def login(self, request: HttpRequest) -> Response:
         # ------------------------------------
         # This API view logs a user in
         # ------------------------------------
@@ -196,7 +203,7 @@ class AuthViewSet(GenericViewSet):
             return Response(data=payload, status=status.HTTP_200_OK)
 
     @action(methods=["GET", "POST"], detail=False, permissions_classes=[AllowAny])
-    def confirm_otp_code(self, request):
+    def confirm_otp_code(self, request: HttpRequest) -> Response:
         # --------------------------------------------------------
         # This API view confirms incoming otp code from the user
         # --------------------------------------------------------
@@ -226,19 +233,17 @@ class AuthViewSet(GenericViewSet):
             otp_valid = otp_verify.verify_otp_code_from_email(
                 otp_code=otp_data.get("otp_code"), email=otp_data.get("email"))
             
-            print("OTP Valid: ", otp_valid)
-            
             # ----------------------------------------------------------------------------
             # If the otp validation is True, set the user active and email active to True
             # ----------------------------------------------------------------------------
-            if otp_valid == True:
+            if otp_valid is True:
                 
                 # ------------------------------------------
                 # Gets user email
                 # ------------------------------------------
                 user_email = otp_data.get("email")
                 
-                # Email context
+                # Context for html email
                 context = {
                     "firstname": user.firstname
                 }
@@ -285,7 +290,7 @@ class AuthViewSet(GenericViewSet):
             return Response(data=payload, status=status.HTTP_200_OK)
 
     @action(methods=["GET", "POST"], detail=False, permissions_classes=[AllowAny])
-    def resend_otp_code(self, request):
+    def resend_otp_code(self, request: HttpRequest) -> Response:
         # -------------------------------------------------------
         # This API view resends an otp code to the user's email
         # -------------------------------------------------------
@@ -339,7 +344,7 @@ class AuthViewSet(GenericViewSet):
 
         else:
             # ----------------------------------------------------------
-            # Else, return a response message telling them to try again
+            # Return a response message telling them to try again
             # ----------------------------------------------------------
             payload = {
                 "status": "failed",
@@ -347,8 +352,8 @@ class AuthViewSet(GenericViewSet):
             }
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['POST', ], detail=False, permissions_classes=[AllowAny])
-    def logout(self, request):
+    @action(methods=["POST", ], detail=False, permissions_classes=[IsAuthenticated])
+    def logout(self, request: HttpRequest) -> Response:
         # ----------------------------------
         # This API view logs a user out
         # ----------------------------------
@@ -372,10 +377,10 @@ class AuthViewSet(GenericViewSet):
 class SuspendUserApiView(views.APIView):
     permissions_classes = [IsAuthenticated]
     
-    def get_single_user(self, username:str) -> Response:
+    def get_single_user(self, email:str) -> Response:
         
         try: 
-            user = User.objects.get(is_active=True, username=username)
+            user = User.objects.get(is_active=True, email=email)
             return user
         except User.DoesNotExist:
             payload = error_response(
@@ -384,8 +389,8 @@ class SuspendUserApiView(views.APIView):
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
         
-    def get(self, request:HttpRequest, username:str) -> Response:
-        user = self.get_single_user(username=username)
+    def get(self, request:HttpRequest, email:str) -> Response:
+        user = self.get_single_user(email=email)
         serializer = SuspendUserSerializer(user)
         
         payload = success_response(
@@ -395,12 +400,12 @@ class SuspendUserApiView(views.APIView):
         )
         return Response(data=payload, status=status.HTTP_200_OK)
 
-    def put(self, request:HttpRequest, username:str) -> Response:
-        user = self.get_single_user(username=username)
+    def put(self, request:HttpRequest, email:str) -> Response:
+        user = self.get_single_user(email=email)
         serializer = SuspendUserSerializer(data=request.data, instance=user)
         
         # Serialized data from the serializer
-        serialized_username = serializer.initial_data.get("username")
+        serialized_email = serializer.initial_data.get("email")
         serialized_active_flag = serializer.initial_data.get("is_staff")
         
         # Logic to check if the user request has the following perms
@@ -412,8 +417,8 @@ class SuspendUserApiView(views.APIView):
         if serializer.is_valid() == user_has_checker_perm is True:
             
             # Checks if the serialized is_active flag is set to True and;
-            # the serialized username is equal to the user username
-            if serialized_active_flag is True and serialized_username is user.username:
+            # the serialized email is equal to the user email
+            if serialized_active_flag is True and serialized_email is user.email:
                 
                 # Suspend the user
                 user.is_active = False
@@ -428,8 +433,8 @@ class SuspendUserApiView(views.APIView):
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
 
             # Checks if the serialized is_active flag is set to False and;
-            # the serialized username is equal to the user username
-            elif serialized_active_flag is False and serialized_username is user.username:
+            # the serialized email is equal to the user email
+            elif serialized_active_flag is False and serialized_email is user.email:
                 
                 # Activate the user
                 user.is_active = True
