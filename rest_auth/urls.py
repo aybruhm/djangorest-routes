@@ -13,6 +13,6 @@ app_name = 'authentication'
 
 urlpatterns = []
 
-urlpatterns += path("suspend_user/<str:username>/", SuspendUserApiView.as_view(), name="suspend-user"),
+urlpatterns += path("suspend_user/<str:email>/", SuspendUserApiView.as_view(), name="suspend_user"),
 urlpatterns += path("change_password/<str:email>/", ChangeUserPasswordAPIView.as_view(), name="change_user_password"),
 urlpatterns += path("", Konnichiwa.as_view(), name="welcome"),
