@@ -42,6 +42,7 @@ setup(
         "django",
         "djangorestframework",
         "djangorestframework-simplejwt",
+        "django-rest-passwordreset",
         "rest-api-payload",
         "django-environ",
     ],
