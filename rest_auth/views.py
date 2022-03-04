@@ -602,7 +602,9 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         'email': reset_password_token.user.email,
         'reset_password_url': "{}?token={}".format(
             instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
-            reset_password_token.key)
+            reset_password_token.key),
+        'site_name': "Django Rest Authentication",
+        'from_email': "noreply@site.com"
     }
 
     # render email text
@@ -611,11 +613,11 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
 
     msg = EmailMultiAlternatives(
         # title:
-        "OVERWOOD - PASSWORD RESET",
+        f"{context['site_name']} - PASSWORD RESET",
         # message:
         email_plaintext_message,
         # from:
-        "noreply@overwood.ng",
+        context["from_email"],
         # to:
         [reset_password_token.user.email]
     )
