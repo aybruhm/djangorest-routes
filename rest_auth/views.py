@@ -34,6 +34,12 @@ from rest_auth.utils import create_user_account, generate_access_token, \
     generate_refresh_token, has_controller_perm_func, send_html_to_email
 from rest_auth.otp_verifications import OTPVerification
 
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import EmailMultiAlternatives
+from django.dispatch import receiver
+from django.template.loader import render_to_string
+from django.urls import reverse
+
 
 otp_verify = OTPVerification()
 User = get_user_model()
@@ -552,3 +558,66 @@ class ChangeUserPasswordAPIView(views.APIView):
                 message=serializer.errors
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+        
+class ResetUserPasswordAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get_current_user(self, email:str) -> Response:
+        try:
+            user = User.objects.get(is_active=True, email=email)
+            return user
+        except User.DoesNotExist:
+            payload = error_response(
+                status="404 not found",
+                message="User does not exist!"
+            )
+            return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
+    
+    def get(self, request:HttpRequest, email:str) -> Response:
+        user = self.get_current_user(email=email)
+        serializer = UserSerializer(user)
+        
+        payload = success_response(
+            status="200 ok",
+            message="User retrieved!",
+            data=serializer.data
+        )
+        return Response(data=payload, status=status.HTTP_200_OK)
+    
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+    """
+    Handles password reset tokens
+    When a token is created, an e-mail needs to be sent to the user
+    :param sender: View Class that sent the signal
+    :param instance: View Instance that sent the signal
+    :param reset_password_token: Token Model Object
+    :param args:
+    :param kwargs:
+    :return:
+    """ 
+    # send an e-mail to the user
+    context = {
+        'email': reset_password_token.user.email,
+        'reset_password_url': "{}?token={}".format(
+            instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
+            reset_password_token.key)
+    }
+
+    # render email text
+    email_html_message = render_to_string('authentication/user_reset_password.html', context)
+    email_plaintext_message = render_to_string('authentication/user_reset_password.txt', context)
+
+    msg = EmailMultiAlternatives(
+        # title:
+        "OVERWOOD - PASSWORD RESET",
+        # message:
+        email_plaintext_message,
+        # from:
+        "noreply@overwood.ng",
+        # to:
+        [reset_password_token.user.email]
+    )
+    msg.attach_alternative(email_html_message, "text/html")
+    msg.send()
