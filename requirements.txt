@@ -1,6 +1,7 @@
 asgiref==3.5.0
 Django==4.0.3
 django-environ==0.8.1
+django-rest-passwordreset==1.2.1
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.1.0
 flake8==4.0.1
