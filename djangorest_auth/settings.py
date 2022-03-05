@@ -57,6 +57,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "django_rest_passwordreset",
+    "corsheaders",
 ]
 
 INSTALLED_APPS = LOCAL_APPS + OWN_APPS + THIRD_PARTY_APPS
@@ -137,7 +138,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_ROOT = "staticfiles"
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
