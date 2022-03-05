@@ -64,7 +64,7 @@ class Konnichiwa(views.APIView):
                 "logout": self.BASE_URL + "rest_auth/logout/",
                 "change_password": self.BASE_URL + "rest_auth/change_password/<str:email>/",
                 "reset_password": self.BASE_URL + "rest_auth/reset_password/<str:email>/",
-                "reset_password/confirm/": self.BASE_URL + "rest_auth/reset_password/<str:uuid>/<str:token>/",
+                "reset_password/confirm/": self.BASE_URL + "rest_auth/reset_password/<str:token>/<str:email>/",
                 "suspend_user": self.BASE_URL + "rest_auth/suspend_user/<str:email>/"
             }
         }
