@@ -34,7 +34,7 @@ from rest_auth.utils import create_user_account, generate_access_token, \
     generate_refresh_token, has_controller_perm_func, send_html_to_email
 from rest_auth.otp_verifications import OTPVerification
 
-from django_rest_passwordreset.signals import reset_password_token_created
+from django_rest_passwordreset.signals import reset_password_token_created # noqa
 from django.core.mail import EmailMultiAlternatives
 from django.dispatch import receiver
 from django.template.loader import render_to_string
@@ -51,7 +51,7 @@ class Konnichiwa(views.APIView):
     HOST_NAME = "127.0.0.1:8000/"
     BASE_URL = PROTOCOL + HOST_NAME
     
-    def get(self, request:HttpRequest) -> Response:
+def get(self, request:HttpRequest) -> Response:
                 
         welcome_data = {
             "yoshi!": "If you made it here, I'm proud of you!",
@@ -608,18 +608,25 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     }
 
     # render email text
-    email_html_message = render_to_string('authentication/user_reset_password.html', context)
-    email_plaintext_message = render_to_string('authentication/user_reset_password.txt', context)
+    # email_html_message = render_to_string('authentication/user_reset_password.html', context)
+    # email_plaintext_message = render_to_string('authentication/user_reset_password.txt', context)
 
-    msg = EmailMultiAlternatives(
-        # title:
-        f"{context['site_name']} - PASSWORD RESET",
-        # message:
-        email_plaintext_message,
-        # from:
-        context["from_email"],
-        # to:
-        [reset_password_token.user.email]
+    # msg = EmailMultiAlternatives(
+    #     # title:
+    #     f"{context['site_name']} - PASSWORD RESET",
+    #     # message:
+    #     email_plaintext_message,
+    #     # from:
+    #     context["from_email"],
+    #     # to:
+    #     [reset_password_token.user.email]
+    # )
+    # msg.attach_alternative(email_html_message, "text/html")
+    # msg.send()
+    
+    # Send html email to user
+    send_html_to_email(
+        to_list=[reset_password_token.user.email], subject="{context['site_name']} - PASSWORD RESET",
+        template_name="emails/authentication/user_reset_password.html", 
+        context=context,
     )
-    msg.attach_alternative(email_html_message, "text/html")
-    msg.send()
