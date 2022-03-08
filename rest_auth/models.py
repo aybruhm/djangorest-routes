@@ -12,6 +12,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     lastname = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=11, unique=True, default=0)
     email = models.EmailField(db_index=True, unique=True)
+    is_active = models.BooleanField(default=False)
+    is_email_active = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['firstname', 'lastname', 'phone_number']
