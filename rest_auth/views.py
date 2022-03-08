@@ -579,7 +579,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     send_html_to_email(
         to_list=[reset_password_token.user.email], 
         subject="Django Rest Auth - PASSWORD RESET",
-        template_name="reset_password_token.user.email", 
+        template_name="emails/authentication/user_reset_password.html", 
         context=context,
     )
         
