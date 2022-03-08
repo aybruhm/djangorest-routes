@@ -1,6 +1,7 @@
 # -------------------
 # Python -> Imports
 # -------------------
+from urllib import response
 from django.http import HttpRequest
 
 # ------------------------------
@@ -25,19 +26,17 @@ from rest_framework.response import Response
 from rest_api_payload import success_response, error_response
 
 from rest_auth.serializers import (
-    AuthUserSerializer, ChangeUserPasswordSerializer, 
+    RegisterUserSerializer, ChangeUserPasswordSerializer, 
     EmptySerializer, \
     OTPSerializer, ResendOTPSerializer,
     SuspendUserSerializer, UserLoginSerializer, 
-    UserSerializer)
-from rest_auth.utils import create_user_account, generate_access_token, \
-    generate_refresh_token, has_controller_perm_func, send_html_to_email
+    UserSerializer
+)
+from rest_auth.utils import send_html_to_email
 from rest_auth.otp_verifications import OTPVerification
 
 from django_rest_passwordreset.signals import reset_password_token_created # noqa
-from django.core.mail import EmailMultiAlternatives
 from django.dispatch import receiver
-from django.template.loader import render_to_string
 from django.urls import reverse
 
 
@@ -55,10 +54,10 @@ def get(self, request:HttpRequest) -> Response:
                 
         welcome_data = {
             "yoshi!": "If you made it here, I'm proud of you!",
-            "message": "I'd love to let you access all this endpoint without being an otaku, but unfortunately, you just have to be one! Quickly register, login to access all the endpoints!",
             "routes": {
                 "register": self.BASE_URL + "rest_auth/register/",
-                "login": self.BASE_URL + "rest_auth/login/",
+                "login (jwt)": self.BASE_URL + "rest_auth/login/token/",
+                "login (refresh jwt)": self.BASE_URL + "rest_auth/login/token/refresh/",
                 "confirm_otp": self.BASE_URL + "rest_auth/confirm_otp/",
                 "resend_otp_code": self.BASE_URL + "rest_auth/resend_otp_code/",
                 "logout": self.BASE_URL + "rest_auth/logout/",
@@ -71,60 +70,45 @@ def get(self, request:HttpRequest) -> Response:
         return Response(data=welcome_data, status=status.HTTP_200_OK)
 
 
+class RegisterOniichan(views.APIView):
+    serializer_class = RegisterUserSerializer
+    permission_classes = [AllowAny]
+    
+    def post(self, request:HttpRequest) -> Response:
+        serializer = self.serializer_class(data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+                
+            """Get user email address and first name"""
+            email = serializer.data.get("email")
+
+            """Send otp code to user's email address"""
+            otp_sent = otp_verify.send_otp_code_to_email(email=email)
+
+            """Checks if otp code has been sent, return user data and otp success message"""
+            if otp_sent:
+                
+                payload = success_response(
+                    status="201 created",
+                    message="Oniichan, an OTP code has been sent to your email address!",
+                    data=serializer.data
+                )
+                return Response(data=payload, status=status.HTTP_200_OK)
+
+            payload = error_response(status="400 bad request", message="Oniichan made mistake!")
+            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
 class AuthViewSet(GenericViewSet):
     permissions_classes = [AllowAny, ]
     serializer_class = EmptySerializer
     serializer_classes = {
         "login": UserLoginSerializer,
-        "register": AuthUserSerializer,
         "confirm_otp_code": OTPSerializer,
         "resend_otp_code": ResendOTPSerializer,
     }
-
-    @action(methods=["GET", "POST"], detail=False)
-    def register(self, request: HttpRequest) -> Response:
-        # ---------------------------------------
-        # This API view creates a new user
-        # ---------------------------------------
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = create_user_account(**serializer.validated_data)
-        data = AuthUserSerializer(user).data
-
-        # -----------------------------------------------------
-        # Gets user's email address and first name
-        # -----------------------------------------------------
-        email = user.email
-        first_name = user.firstname
-
-        # --------------------------------------------
-        # Send otp code to user's email address
-        # --------------------------------------------
-        otp_sent = otp_verify.send_otp_code_to_email(
-            email=email, first_name=first_name
-        )
-
-        # ---------------------------------------------------------------------------
-        # Checks if otp code has been sent, return user data and otp success message
-        # ---------------------------------------------------------------------------
-        if otp_sent:
-            
-            payload = {
-                "status": "success",
-                "message": "An OTP code has been sent to the provided email address.",
-                "data": data
-            }
-            
-            return Response(data=payload, status=status.HTTP_200_OK)
-
-        else:
-            
-            payload = {
-                "status": "failed",
-                "message": "Please retry again"
-            }
-            
-            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=["GET", "POST"], detail=False, permissions_classes=[AllowAny])
     def login(self, request: HttpRequest) -> Response:
@@ -185,8 +169,8 @@ class AuthViewSet(GenericViewSet):
             # --------------------------------------
             # Get access and refresh token for user
             # --------------------------------------
-            access_token = generate_access_token(user)
-            refresh_token = generate_refresh_token(user)
+            # access_token = generate_access_token(user)
+            # refresh_token = generate_refresh_token(user)
             
             # --------------------------------------------
             # Returns logged in user data -> information
@@ -194,11 +178,8 @@ class AuthViewSet(GenericViewSet):
             data = {
                 "email": data["email"],
                 "password": data["password"],
-                "token": access_token
+                # "token": access_token
             }
-            
-            # Set cookie using the refresh token
-            response.set_cookie(key="refreshtoken", value=refresh_token, httponly=True)
             
             payload = {
                 "status": "success",
@@ -357,19 +338,6 @@ class AuthViewSet(GenericViewSet):
             }
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=["POST", ], detail=False, permissions_classes=[IsAuthenticated])
-    def logout(self, request: HttpRequest) -> Response:
-        # ----------------------------------
-        # This API view logs a user out
-        # ----------------------------------
-        logout(request)
-        
-        payload = {
-            "status": "success",
-            "message": "Logout successful"
-        }
-        return Response(data=payload, status=status.HTTP_200_OK)
-
     def get_serializer_class(self):
         if not isinstance(self.serializer_classes, dict):
             raise ImproperlyConfigured("serializer_classes should be a dict mapping.")
@@ -379,95 +347,97 @@ class AuthViewSet(GenericViewSet):
         return super().get_serializer_class()
     
 
-class SuspendUserApiView(views.APIView):
-    permissions_classes = [IsAuthenticated]
+# class SuspendUserApiView(views.APIView):
+#     permissions_classes = [IsAuthenticated]
     
-    def get_single_user(self, email:str) -> Response:
+#     def get_single_user(self, email:str) -> Response:
         
-        try: 
-            user = User.objects.get(is_active=True, email=email)
-            return user
-        except User.DoesNotExist:
-            payload = error_response(
-                status="failed",
-                message="User does not exist!"
-            )
-            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+#         try: 
+#             user = User.objects.get(is_active=True, email=email)
+#             return user
+#         except User.DoesNotExist:
+#             payload = error_response(
+#                 status="failed",
+#                 message="User does not exist!"
+#             )
+#             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
         
-    def get(self, request:HttpRequest, email:str) -> Response:
-        user = self.get_single_user(email=email)
-        serializer = SuspendUserSerializer(user)
+#     def get(self, request:HttpRequest, email:str) -> Response:
+#         user = self.get_single_user(email=email)
+#         serializer = SuspendUserSerializer(user)
         
-        payload = success_response(
-            status="success",
-            message="User retrieved!",
-            data=serializer.data
-        )
-        return Response(data=payload, status=status.HTTP_200_OK)
+#         payload = success_response(
+#             status="success",
+#             message="User retrieved!",
+#             data=serializer.data
+#         )
+#         return Response(data=payload, status=status.HTTP_200_OK)
 
-    def put(self, request:HttpRequest, email:str) -> Response:
-        user = self.get_single_user(email=email)
-        serializer = SuspendUserSerializer(data=request.data, instance=user)
+#     def put(self, request:HttpRequest, email:str) -> Response:
+#         user = self.get_single_user(email=email)
+#         serializer = SuspendUserSerializer(data=request.data, instance=user)
         
-        # Serialized data from the serializer
-        serialized_email = serializer.initial_data.get("email")
-        serialized_active_flag = serializer.initial_data.get("is_staff")
+#         # Serialized data from the serializer
+#         serialized_email = serializer.initial_data.get("email")
+#         serialized_active_flag = serializer.initial_data.get("is_staff")
         
-        # Logic to check if the user request has the following perms
-        # -> is_staff, is_active, is_authenticated, has_checker_perm
-        user_has_checker_perm = has_controller_perm_func(request.user)
+#         # Logic to check if the user request has the following perms
+#         # -> is_staff, is_active, is_authenticated, has_checker_perm
+#         user_has_checker_perm = has_controller_perm_func(request.user)
         
-        # Check if the serializer is valid and 
-        # the user making the request has controller permission
-        if serializer.is_valid() == user_has_checker_perm is True:
+#         # Check if the serializer is valid and 
+#         # the user making the request has controller permission
+#         if serializer.is_valid() == user_has_checker_perm is True:
             
-            # Checks if the serialized is_active flag is set to True and;
-            # the serialized email is equal to the user email
-            if serialized_active_flag is True and serialized_email is user.email:
+#             # Checks if the serialized is_active flag is set to True and;
+#             # the serialized email is equal to the user email
+#             if serialized_active_flag is True and serialized_email is user.email:
                 
-                # Suspend the user
-                user.is_active = False
-                user.save()
+#                 # Suspend the user
+#                 user.is_active = False
+#                 user.save()
 
-                # Custom payload
-                payload = success_response(
-                    status="success", 
-                    message="User successfully suspended!", 
-                    data=serializer.data
-                )
-                return Response(data=payload, status=status.HTTP_202_ACCEPTED)
+#                 # Custom payload
+#                 payload = success_response(
+#                     status="success", 
+#                     message="User successfully suspended!", 
+#                     data=serializer.data
+#                 )
+#                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
 
-            # Checks if the serialized is_active flag is set to False and;
-            # the serialized email is equal to the user email
-            elif serialized_active_flag is False and serialized_email is user.email:
+#             # Checks if the serialized is_active flag is set to False and;
+#             # the serialized email is equal to the user email
+#             elif serialized_active_flag is False and serialized_email is user.email:
                 
-                # Activate the user
-                user.is_active = True
-                user.save()
+#                 # Activate the user
+#                 user.is_active = True
+#                 user.save()
                 
-                # Custom payload
-                payload = success_response(
-                    status="success",
-                    message="User successfully activated!",
-                    data=serializer.data
-                )
-                return Response(data=payload, status=status.HTTP_202_ACCEPTED)
+#                 # Custom payload
+#                 payload = success_response(
+#                     status="success",
+#                     message="User successfully activated!",
+#                     data=serializer.data
+#                 )
+#                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
         
-            payload = error_response(
-                success="failed",
-                message="User does not have the required permission to perform this action!"
-            )
-            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+#             payload = error_response(
+#                 success="failed",
+#                 message="User does not have the required permission to perform this action!"
+#             )
+#             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
     
-        payload = error_response(
-            status="failed",
-            message="Something went wrong. Please try again!"
-        )
-        return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+#         payload = error_response(
+#             status="failed",
+#             message="Something went wrong. Please try again!"
+#         )
+#         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
     
     
 class ChangeUserPasswordAPIView(views.APIView):
     permissions_classes = [IsAuthenticated]
+    changepassword_serializer = ChangeUserPasswordSerializer
+    user_serializer = UserSerializer
     
     def get_current_user(self, email:str) -> Response:
         
@@ -477,26 +447,26 @@ class ChangeUserPasswordAPIView(views.APIView):
         except User.DoesNotExist:
             payload = error_response(
                 status="404 not found",
-                message="User does not exist!"
+                message="Oniichan not found!"
             )
             return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
     
     def get(self, request: HttpRequest, email:str) -> Response:
         user = self.get_current_user(email=email)
-        serializer = UserSerializer(user)
+        serializer = self.user_serializer(user)
         
         payload = success_response(
             status="200 ok",
-            message="User retrieved!",
+            message="Oniichan found!",
             data=serializer.data
         )
         return Response(data=payload, status=status.HTTP_200_OK)
     
     def put(self, request:HttpRequest, email:str) -> Response:
         
-        # Get current user
+        """Get current logged in user"""
         user = self.get_current_user(email=email)
-        serializer = ChangeUserPasswordSerializer(user, data=request.data)
+        serializer = self.changepassword_serializer(user, data=request.data)
         
         if serializer.is_valid():
             
@@ -542,25 +512,22 @@ class ChangeUserPasswordAPIView(views.APIView):
                     data=user_new_data
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
-            
-            else:
-                
-                payload = error_response(
-                    status="400 bad request",
-                    message="Password incorrect. Please try again!"
-                )
-                return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-            
-        else:
-            
+
             payload = error_response(
                 status="400 bad request",
-                message=serializer.errors
+                message="Oniichan password incorrect. Please try again!"
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+
+        payload = error_response(
+            status="400 bad request",
+            message=serializer.errors
+        )
+        return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+        
         
 class ResetUserPasswordAPIView(views.APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
     def get_current_user(self, email:str) -> Response:
         try:
@@ -569,7 +536,7 @@ class ResetUserPasswordAPIView(views.APIView):
         except User.DoesNotExist:
             payload = error_response(
                 status="404 not found",
-                message="User does not exist!"
+                message="Couldn't find any oniichan with that email!"
             )
             return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
     
@@ -579,7 +546,7 @@ class ResetUserPasswordAPIView(views.APIView):
         
         payload = success_response(
             status="200 ok",
-            message="User retrieved!",
+            message="Found an oniichan!",
             data=serializer.data
         )
         return Response(data=payload, status=status.HTTP_200_OK)
@@ -597,7 +564,8 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     :param kwargs:
     :return:
     """ 
-    # send an e-mail to the user
+    
+    "Context to be applied on email"
     context = {
         'email': reset_password_token.user.email,
         'reset_password_url': "{}?token={}".format(
@@ -607,26 +575,31 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         'from_email': "noreply@site.com"
     }
 
-    # render email text
-    # email_html_message = render_to_string('authentication/user_reset_password.html', context)
-    # email_plaintext_message = render_to_string('authentication/user_reset_password.txt', context)
-
-    # msg = EmailMultiAlternatives(
-    #     # title:
-    #     f"{context['site_name']} - PASSWORD RESET",
-    #     # message:
-    #     email_plaintext_message,
-    #     # from:
-    #     context["from_email"],
-    #     # to:
-    #     [reset_password_token.user.email]
-    # )
-    # msg.attach_alternative(email_html_message, "text/html")
-    # msg.send()
-    
-    # Send html email to user
+    """Send html e-mail to the user"""
     send_html_to_email(
-        to_list=[reset_password_token.user.email], subject="{context['site_name']} - PASSWORD RESET",
-        template_name="emails/authentication/user_reset_password.html", 
+        to_list=[reset_password_token.user.email], 
+        subject="Django Rest Auth - PASSWORD RESET",
+        template_name="reset_password_token.user.email", 
         context=context,
     )
+        
+        
+class LogOniichan(views.APIView):
+    """This api view logs out a user"""
+    
+    response = Response()
+    
+    def post(self, request:HttpRequest) -> Response:
+        
+        """Flush out cookie from the client side"""
+        self.response.flush()
+        
+        """Wipes user request"""
+        logout(request)
+        
+        payload = success_response(
+            status="204 no content",
+            message="Oniichan has been logged out!",
+            data={}
+        )
+        return Response(data=payload, status=status.HTTP_204_NO_CONTENT)
