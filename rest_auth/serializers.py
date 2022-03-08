@@ -24,26 +24,26 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
 
-class AuthUserSerializer(serializers.ModelSerializer):
+class RegisterUserSerializer(serializers.ModelSerializer):
     """
     A serializer for registering the user
     """
 
     class Meta:
         model = User
-        ref_name = "Auth User"
-        fields = [
-            "id", "firstname", "lastname", "email",
-            "password", "phone_number"
-        ]
+        fields = ("email", "password", "phone_number")
         extra_kwargs = {
-            "password": {
-                "write_only": True
-            },
-            "email": {
-                "write_only": True
-            }
+            "password": {"write_only": True}
         }
+    
+    def create(self, **validated_data):
+        password = validated_data.pop("password", None)
+        user = self.Meta.model(**validated_data)
+        
+        if user is not None:
+            user.set_password(password)
+        user.save()
+        return user
 
 
 class UserLoginSerializer(serializers.Serializer):
