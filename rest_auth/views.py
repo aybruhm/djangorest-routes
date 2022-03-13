@@ -117,9 +117,9 @@ class ConfirmOniichanOTP(views.APIView):
             """Get serialized data"""
             otp_data = serializer.data
 
-            """Check to see if user user exits"""
+            """Check to see if user exits"""
             try:
-                user = User.objects.get(email=otp_data.get('email'))
+                user = User.objects.get(email=otp_data.get("email"))
             except User.DoesNotExist:
                 payload = {
                     "status": "failed",
@@ -127,8 +127,8 @@ class ConfirmOniichanOTP(views.APIView):
                 }
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
-            """Check if a user active and email active flag is False"""
-            if user.is_active == True and user.is_email_active == False:
+            """Check if user email active flag is False"""
+            if user.is_email_active == False:
 
                 """Verifies user with the provided OTP"""
                 otp_valid = otp_verify.verify_otp_code_from_email(
@@ -162,19 +162,20 @@ class ConfirmOniichanOTP(views.APIView):
                 else:
                     
                     """Return a response message that lets the user know the otp code validation failed"""
-                    payload = {
-                        "status": "failed",
-                        "message": "OTP code incorrect. Try again!"
-                    }
+                    payload = error_response(
+                        status="failed",
+                        message="OTP code incorrect. Try again!"
+                    )
                     return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
             elif user.is_active == True and user.is_email_active == True:
                 
                 """Let the user know that he/she is verified already"""
-                payload = {
-                    "status": "success",
-                    "message": "You are already verified!"
-                }
+                payload = success_response(
+                    status="success",
+                    message="You are already verified!",
+                    data={}
+                )
                 return Response(data=payload, status=status.HTTP_200_OK)
         
 
