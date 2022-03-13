@@ -62,8 +62,10 @@ def get(self, request:HttpRequest) -> Response:
                 "resend_otp_code": self.BASE_URL + "rest_auth/resend_otp_code/",
                 "logout": self.BASE_URL + "rest_auth/logout/",
                 "change_password": self.BASE_URL + "rest_auth/change_password/<str:email>/",
-                "reset_password": self.BASE_URL + "rest_auth/reset_password/<str:email>/",
-                "reset_password/confirm/": self.BASE_URL + "rest_auth/reset_password/<str:token>/<str:email>/",
+                "reset_password (token)": self.BASE_URL + "rest_auth/reset_password/<str:email>/",
+                "reset_password_confirm (token)": self.BASE_URL + "rest_auth/reset_password/<confirm/",
+                "rest_password_otp (otp)": self.BASE_URL + "rest_auth/reset_password_otp/<str:email>/",
+                "rest_password_otp_confirm (otp)": self.BASE_URL + "rest_auth/reset_password_otp/confirm/",
                 "suspend_user": self.BASE_URL + "rest_auth/suspend_user/<str:email>/"
             }
         }
@@ -585,14 +587,16 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         
         
 class LogOniichan(views.APIView):
-    """This api view logs out a user"""
-    
+    """
+    Removes the authenticated user's ID from the request and flushes their
+    session data.
+    """
     response = Response()
     
     def post(self, request:HttpRequest) -> Response:
         
-        """Flush out cookie from the client side"""
-        self.response.flush()
+        """Flush out user's session from the client side"""
+        request.session.flush()
         
         """Wipes user request"""
         logout(request)
