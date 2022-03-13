@@ -2,7 +2,9 @@ from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin
 )
 from django.db import models
+from hashid_field import HashidField
 from rest_auth.managers import UserManager
+from djangorest_auth.config.local import HASH_FIELD_SALT
 
 
 
@@ -12,6 +14,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     lastname = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=11, unique=True, default=0)
     email = models.EmailField(db_index=True, unique=True)
+    otp_code = HashidField(salt=HASH_FIELD_SALT, min_length=6, unique=True, blank=True, null=True)
     is_active = models.BooleanField(default=False)
     is_email_active = models.BooleanField(default=False)
 
