@@ -29,7 +29,7 @@ class OTPVerification:
             otp_code = user.otp_code
             return otp_code
 
-    def send_otp_code_to_email(self, email, first_name=None):
+    def send_otp_code_to_email(self, email, first_name):
         """Generate user otp code"""
         otp_code = self.generate_otp_code(email=email)
         
@@ -38,8 +38,8 @@ class OTPVerification:
         
         """context for email template"""
         context = {
-            "firstname": None if user.firstname is None else "",
-            "otp_code": user.otp_code.id
+            "firstname": first_name,
+            "otp__code": user.otp_code.id
         }
         
         """Send otp html email to user"""
