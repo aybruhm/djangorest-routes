@@ -45,6 +45,8 @@ User = get_user_model()
 
 
 class Konnichiwa(views.APIView):
+    permission_classes = [AllowAny]
+        
     
     PROTOCOL = "http://"
     HOST_NAME = "127.0.0.1:8000/"
