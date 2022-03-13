@@ -45,15 +45,13 @@ User = get_user_model()
 
 
 class Konnichiwa(views.APIView):
-    permission_classes = [AllowAny]
-        
     
     PROTOCOL = "http://"
     HOST_NAME = "127.0.0.1:8000/"
     BASE_URL = PROTOCOL + HOST_NAME
     
-def get(self, request:HttpRequest) -> Response:
-                
+    def get(self, request:HttpRequest) -> Response:
+                    
         welcome_data = {
             "yoshi!": "If you made it here, I'm proud of you!",
             "routes": {
