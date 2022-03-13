@@ -103,6 +103,80 @@ class RegisterOniichan(views.APIView):
             payload = error_response(status="400 bad request", message="Oniichan made mistake!")
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
         
+        
+class ConfirmOniichanOTP(views.APIView):
+    serializer_class = OTPSerializer
+    permission_classes = [AllowAny]
+    
+    
+    def post(self, request:HttpRequest) -> Response:
+        serializer = self.serializer_class(data=request.data)
+        
+        if serializer.is_valid():
+            
+            """Get serialized data"""
+            otp_data = serializer.data
+
+            """Check to see if user user exits"""
+            try:
+                user = User.objects.get(email=otp_data.get('email'))
+            except User.DoesNotExist:
+                payload = {
+                    "status": "failed",
+                    "message": "Credentials is not in our records!"
+                }
+                return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+
+            """Check if a user active and email active flag is False"""
+            if user.is_active == True and user.is_email_active == False:
+
+                """Verifies user with the provided OTP"""
+                otp_valid = otp_verify.verify_otp_code_from_email(
+                    otp_code=otp_data.get("otp_code"), email=otp_data.get("email"))
+                
+                """If the otp validation is True, set the user active and email active to True"""
+                if otp_valid is True:
+                    
+                    """Gets user email"""
+                    user_email = otp_data.get("email")
+                    
+                    """Context for html email"""
+                    context = {
+                        "firstname": user.firstname
+                    }
+                    
+                    """Sends Welcome HTML Email to user"""
+                    send_html_to_email(
+                        to_list=[user_email], subject="WELCOME",
+                        template_name="emails/users/welcome.html", 
+                        context=context,
+                    )
+
+                    """Return a response message that lets the user know the otp code has been verified"""
+                    payload = {
+                        "status": "success",
+                        "message": "OTP code has been verified!"
+                    }
+                    return Response(data=payload, status=status.HTTP_202_ACCEPTED)
+
+                else:
+                    
+                    """Return a response message that lets the user know the otp code validation failed"""
+                    payload = {
+                        "status": "failed",
+                        "message": "OTP code incorrect. Try again!"
+                    }
+                    return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+
+            elif user.is_active == True and user.is_email_active == True:
+                
+                """Let the user know that he/she is verified already"""
+                payload = {
+                    "status": "success",
+                    "message": "You are already verified!"
+                }
+                return Response(data=payload, status=status.HTTP_200_OK)
+        
 
 
 class AuthViewSet(GenericViewSet):
@@ -194,90 +268,7 @@ class AuthViewSet(GenericViewSet):
 
     @action(methods=["GET", "POST"], detail=False, permissions_classes=[AllowAny])
     def confirm_otp_code(self, request: HttpRequest) -> Response:
-        # --------------------------------------------------------
-        # This API view confirms incoming otp code from the user
-        # --------------------------------------------------------
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        otp_data = serializer.data
-
-        # ----------------------------------------------------
-        # Capture email from serialized data and fetch user
-        # ----------------------------------------------------
-        try:
-            user = User.objects.get(email=otp_data.get('email'))
-        except User.DoesNotExist:
-            payload = {
-                "status": "failed",
-                "message": "Credentials is not in our records!"
-            }
-
-        # ----------------------------------------------------------
-        # Check if a user active and email active flag is False
-        # ----------------------------------------------------------
-        if user.is_active == True and user.is_email_active == False:
-
-            # ------------------------------------
-            # Verify user with the provided OTP
-            # ------------------------------------
-            otp_valid = otp_verify.verify_otp_code_from_email(
-                otp_code=otp_data.get("otp_code"), email=otp_data.get("email"))
-            
-            # ----------------------------------------------------------------------------
-            # If the otp validation is True, set the user active and email active to True
-            # ----------------------------------------------------------------------------
-            if otp_valid is True:
-                
-                # ------------------------------------------
-                # Gets user email
-                # ------------------------------------------
-                user_email = otp_data.get("email")
-                
-                # Context for html email
-                context = {
-                    "firstname": user.firstname
-                }
-                
-                # ------------------------------------------
-                # Send Welcome HTML Email Template to user
-                # ------------------------------------------
-                send_html_to_email(
-                    to_list=[user_email], subject="WELCOME",
-                    template_name="emails/users/welcome.html", 
-                    context=context,
-                )
-
-                # ---------------------------------------------------------------------------------
-                # Return a response message that lets the user know the otp code has been verified
-                # ---------------------------------------------------------------------------------
-                payload = {
-                    "status": "success",
-                    "message": "OTP code has been verified!"
-                }
-                
-                return Response(data=payload, status=status.HTTP_202_ACCEPTED)
-
-            else:
-                
-                # ---------------------------------------------------------------------------------
-                # Return a response message that lets the user know the otp code validation failed
-                # ---------------------------------------------------------------------------------
-                payload = {
-                    "status": "failed",
-                    "message": "OTP code incorrect. Try again!"
-                }
-                return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-
-        elif user.is_active == True and user.is_email_active == True:
-            
-            # -------------------------------------------------------
-            # Let the user know that he/she is verified already
-            # -------------------------------------------------------
-            payload = {
-                "status": "success",
-                "message": "You are already verified!"
-            }
-            return Response(data=payload, status=status.HTTP_200_OK)
+        pass
 
     @action(methods=["GET", "POST"], detail=False, permissions_classes=[AllowAny])
     def resend_otp_code(self, request: HttpRequest) -> Response:
