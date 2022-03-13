@@ -1,7 +1,7 @@
 from rest_auth.views import (
     RegisterOniichan, ConfirmOniichanOTP,
     ResendOniichanOTP,
-    ChangeUserPasswordAPIView, Konnichiwa,
+    ChangeOniichanPassword, Konnichiwa,
     LogOniichan, email_otp_verify
 )
 from rest_framework_simplejwt.views import (
@@ -19,7 +19,7 @@ urlpatterns = [
     path("login/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("login/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # path("suspend_user/<str:email>/", SuspendUserApiView.as_view(), name="suspend_user"), 
-    path("change_password/<str:email>/", ChangeUserPasswordAPIView.as_view(), name="change_user_password"),
+    path("change_password/<str:email>/", ChangeOniichanPassword.as_view(), name="change_user_password"),
     path("logout/", LogOniichan.as_view(), name="logout_user"),
     
     

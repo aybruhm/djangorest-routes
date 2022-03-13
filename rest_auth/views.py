@@ -323,16 +323,7 @@ class AuthViewSet(GenericViewSet):
             }
             return Response(data=payload, status=status.HTTP_200_OK)
 
-    @action(methods=["GET", "POST"], detail=False, permissions_classes=[AllowAny])
-    def confirm_otp_code(self, request: HttpRequest) -> Response:
-        pass
 
-    @action(methods=["GET", "POST"], detail=False, permissions_classes=[AllowAny])
-    def resend_otp_code(self, request: HttpRequest) -> Response:
-        # -------------------------------------------------------
-        # This API view resends an otp code to the user's email
-        # -------------------------------------------------------
-        pass
 
     def get_serializer_class(self):
         if not isinstance(self.serializer_classes, dict):
@@ -430,9 +421,9 @@ class AuthViewSet(GenericViewSet):
 #         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
     
     
-class ChangeUserPasswordAPIView(views.APIView):
+class ChangeOniichanPassword(views.APIView):
     permissions_classes = [IsAuthenticated]
-    changepassword_serializer = ChangeUserPasswordSerializer
+    serializer_class = ChangeUserPasswordSerializer
     user_serializer = UserSerializer
     
     def get_current_user(self, email:str) -> Response:
@@ -447,22 +438,11 @@ class ChangeUserPasswordAPIView(views.APIView):
             )
             return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
     
-    def get(self, request: HttpRequest, email:str) -> Response:
-        user = self.get_current_user(email=email)
-        serializer = self.user_serializer(user)
-        
-        payload = success_response(
-            status="200 ok",
-            message="Oniichan found!",
-            data=serializer.data
-        )
-        return Response(data=payload, status=status.HTTP_200_OK)
-    
     def put(self, request:HttpRequest, email:str) -> Response:
         
         """Get current logged in user"""
         user = self.get_current_user(email=email)
-        serializer = self.changepassword_serializer(user, data=request.data)
+        serializer = self.serializer_class(user, data=request.data)
         
         if serializer.is_valid():
             
@@ -474,7 +454,8 @@ class ChangeUserPasswordAPIView(views.APIView):
             If the user password equals the current password, 
             set the variable to True, else set it to False
             """
-            can_change_password = True if hashers.check_password(current_password, user.password) else False
+            can_change_password = True if hashers.check_password(current_password, user.password)\
+                else False
             
             """
             If the can change password variable is True, 
@@ -494,13 +475,8 @@ class ChangeUserPasswordAPIView(views.APIView):
                 user.set_password(new_password)
                 user.save()
                 
-                user_new_data = {
-                    "password": {
-                        "old": current_password,
-                        "new": new_password,
-                        "new_again": repeat_new_password
-                    }
-                }
+                """Get serialized data for user"""
+                user_new_data = self.user_serializer(user)
                 
                 payload = success_response(
                     status="202 accepted",
