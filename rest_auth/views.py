@@ -178,6 +178,63 @@ class ConfirmOniichanOTP(views.APIView):
                 return Response(data=payload, status=status.HTTP_200_OK)
         
 
+class ResendOniichanOTP(views.APIView):
+    serializer_class = ResendOTPSerializer
+    permission_classes = [AllowAny]
+    
+    
+    def post(self, request:HttpRequest) -> Response:
+        serializer = self.serializer_class(data=request.data)
+        
+        if serializer.is_valid():
+            
+            """Get serialized data"""
+            otp_data = serializer.data
+
+            """Check to see if user user exits"""
+            try:
+                user = User.objects.get(email=otp_data.get('email'))
+            except User.DoesNotExist:
+                payload = {
+                    "status": "failed",
+                    "message": "Credentials does not match our record!"
+                }
+                return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+
+            """Check if a user active and email active flag is True"""
+            if user.is_active is True and user.is_email_active is True:
+                
+                payload = {
+                    "status": "success",
+                    "message": "You are already verified!"
+                }
+                return Response(data=payload,
+                                status=status.HTTP_200_OK)
+
+            elif user.is_email_active is False:
+
+                """Send otp code to user's email address"""
+                otp_sent = otp_verify.send_otp_code_to_email(
+                    email=otp_data.get("email"), first_name=user.firstname
+                )
+
+                """Check if otp has been sent, then send a response message"""
+                if otp_sent:
+                    
+                    payload = {
+                        "status": "success",
+                        "message": "An OTP code has been sent to the provided email address."
+                    }
+                    return Response(data=payload, status=status.HTTP_201_CREATED)
+
+            else:
+                """Return a response message telling them to try again"""
+                payload = {
+                    "status": "failed",
+                    "message": "Something went wrong! Please try again."
+                }
+                return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class AuthViewSet(GenericViewSet):
     permissions_classes = [AllowAny, ]
@@ -275,63 +332,7 @@ class AuthViewSet(GenericViewSet):
         # -------------------------------------------------------
         # This API view resends an otp code to the user's email
         # -------------------------------------------------------
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        otp_data = serializer.data
-
-        # ------------------------------------------------------
-        # Capture email from serialized data and fetch user
-        # ------------------------------------------------------
-        try:
-            user = User.objects.get(email=otp_data.get('email'))
-        except User.DoesNotExist:
-            payload = {
-                "status": "failed",
-                "message": "Credentials does not match our record!"
-            }
-            return Response(data=payload, status=status.HTTP_401_UNAUTHORIZED)
-
-        # ------------------------------------------------
-        # Checks if user account is already validated
-        # ------------------------------------------------
-        if user.is_active is True and user.is_email_active is True:
-            
-            payload = {
-                "status": "success",
-                "message": "You are already verified!"
-            }
-            return Response(data=payload,
-                            status=status.HTTP_200_OK)
-
-        elif user.is_email_active is False:
-
-            # ----------------------------------------
-            # Send otp code to user's email address
-            # ----------------------------------------
-            otp_sent = otp_verify.send_otp_code_to_email(
-                email=otp_data.get("email"), first_name=user.firstname
-            )
-
-            # ----------------------------------------------------------
-            # Check if otp has been sent, then send a response message
-            # ----------------------------------------------------------
-            if otp_sent:
-                
-                payload = {
-                    "status": "success",
-                    "message": "An OTP code has been sent to the provided email address."
-                }
-                return Response(data=payload, status=status.HTTP_201_CREATED)
-
-        else:
-            # ----------------------------------------------------------
-            # Return a response message telling them to try again
-            # ----------------------------------------------------------
-            payload = {
-                "status": "failed",
-                "message": "Something went wrong! Please try again."
-            }
-            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+        pass
 
     def get_serializer_class(self):
         if not isinstance(self.serializer_classes, dict):
