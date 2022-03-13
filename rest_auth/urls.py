@@ -1,5 +1,5 @@
 from rest_auth.views import (
-    RegisterOniichan, SuspendUserApiView, 
+    RegisterOniichan, 
     ChangeUserPasswordAPIView, Konnichiwa,
     LogOniichan
 )
@@ -15,7 +15,7 @@ urlpatterns = [
     path("register/", RegisterOniichan.as_view(), name="register_user"),
     path("login/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("login/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("suspend_user/<str:email>/", SuspendUserApiView.as_view(), name="suspend_user"), 
+    # path("suspend_user/<str:email>/", SuspendUserApiView.as_view(), name="suspend_user"), 
     path("change_password/<str:email>/", ChangeUserPasswordAPIView.as_view(), name="change_user_password"),
     path("logout/", LogOniichan.as_view(), name="logout_user"),
 ]
