@@ -1,9 +1,8 @@
-from django.contrib.auth import get_user_model
+from djangorest_auth.config.base import AUTH_USER_MODEL
 from rest_framework import serializers
 
 
-User = get_user_model()
-User.__init__.unique = True
+User = AUTH_USER_MODEL
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,7 +12,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        ref_name = "Auth User"
         fields = [
             "id", "firstname", "lastname", "email"
         ]
