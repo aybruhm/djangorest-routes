@@ -10,6 +10,7 @@ from django.http import HttpRequest
 from django.contrib.auth import authenticate, get_user_model, \
     logout, login, hashers
 from django.core.exceptions import ImproperlyConfigured
+from django.shortcuts import render
 
 # -----------------------------------------------------
 # Installed third-party app -> Rest Framework Imports
@@ -84,9 +85,10 @@ class RegisterOniichan(views.APIView):
                 
             """Get user email address and first name"""
             email = serializer.data.get("email")
+            firstname = serializer.data.get("firstname")
 
             """Send otp code to user's email address"""
-            otp_sent = otp_verify.send_otp_code_to_email(email=email)
+            otp_sent = otp_verify.send_otp_code_to_email(email=email, first_name=firstname)
 
             """Checks if otp code has been sent, return user data and otp success message"""
             if otp_sent:
@@ -607,3 +609,8 @@ class LogOniichan(views.APIView):
             data={}
         )
         return Response(data=payload, status=status.HTTP_204_NO_CONTENT)
+    
+    
+
+def email_otp_verify(request):
+    return render(request, "emails/authentication/otp_verify.html")
