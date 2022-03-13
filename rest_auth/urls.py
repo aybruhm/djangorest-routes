@@ -24,5 +24,5 @@ urlpatterns = [
     
     
     # Email 
-    path("otp_verify/", email_otp_verify, name="email_otp_verify    ")
+    path("otp_verify/", email_otp_verify, name="email_otp_verify ")
 ]
