@@ -1,15 +1,20 @@
-from djangorest_auth.config.base import *
+from djangorest_auth.config.base import * #noqa
 
 
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS += []
+ALLOWED_HOSTS += [
+    "djangorest_auth.digitalstade.com",
+    "djangorest_auth.herokuapp.com"
+]
 
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {}
+DATABASES = {
+    "default": dj_database_url.parse(env("DATABASE_URL")),
+}
 
 # Application Definition
 
@@ -32,3 +37,12 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+# HTTPS SETTINGS
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 99999990
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
