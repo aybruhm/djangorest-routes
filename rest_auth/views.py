@@ -100,8 +100,8 @@ class RegisterOniichan(views.APIView):
                 )
                 return Response(data=payload, status=status.HTTP_200_OK)
 
-            payload = error_response(status="400 bad request", message="Oniichan made mistake!")
-            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+        payload = error_response(status="400 bad request", message=serializer.errors)
+        return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
         
         
 class ConfirmOniichanOTP(views.APIView):

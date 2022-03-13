@@ -1,8 +1,6 @@
-from djangorest_auth.config.base import AUTH_USER_MODEL
+from rest_auth.models import User
 from rest_framework import serializers
 
-
-User = AUTH_USER_MODEL
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -33,15 +31,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "password": {"write_only": True}
         }
-    
-    def create(self, **validated_data):
-        password = validated_data.pop("password", None)
-        user = self.Meta.model(**validated_data)
-        
-        if user is not None:
-            user.set_password(password)
-        user.save()
-        return user
 
 
 class UserLoginSerializer(serializers.Serializer):
