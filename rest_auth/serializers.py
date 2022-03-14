@@ -1,5 +1,7 @@
 from rest_auth.models import User
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_api_payload import success_response
 
 
 
@@ -39,6 +41,27 @@ class UserLoginSerializer(serializers.Serializer):
     """
     email = serializers.EmailField(max_length=300, required=True)
     password = serializers.CharField(required=True)
+    
+
+class UserLoginObtainPairSerializer(TokenObtainPairSerializer):
+    
+    def validate(self, attrs):
+        """The default result (access/refresh tokens)"""
+        data = super(UserLoginObtainPairSerializer, self).validate(attrs)
+        
+        """Custom data you want to include"""
+        data.update({'email': self.user.email})
+        data.update({'firstname': self.user.firstname})
+        data.update({'lastname': self.user.lastname})
+        data.update({'id': self.user.id})
+        
+        """and everything else you want to send in the response"""
+        payload = success_response(
+            status="success",
+            message="Login successful",
+            data=data
+        )
+        return payload
     
 
 class ChangeUserPasswordSerializer(serializers.Serializer):
