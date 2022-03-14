@@ -3,7 +3,10 @@ from rest_auth.views import (
     ResendOniichanOTP, LoginOniichan,
     RefreshLoginOniichan,
     ChangeOniichanPassword, Konnichiwa,
-    LogOniichan, email_otp_verify
+    LogOniichan, email_otp_verify,
+    ResetOniichanPasswordOTPAPIView,
+    ConfirmResetOniichanPasswordOTPAPIView,
+    ResetOniichanPasswordOTPCompleteAPIView
 )
 from django.urls import path
 
@@ -16,6 +19,9 @@ urlpatterns = [
     path("login/refresh/", RefreshLoginOniichan.as_view(), name="login_refresh"),
     path("confirm_otp/", ConfirmOniichanOTP.as_view(), name="confirm_otp"),
     path("resend_otp_code/", ResendOniichanOTP.as_view(), name="resend_otp_code"),
+    path("password_reset_otp/", ResetOniichanPasswordOTPAPIView.as_view(), name="password_reset_otp"),
+    path("password_reset_otp/confirm/", ConfirmResetOniichanPasswordOTPAPIView.as_view(), name="password_reset_otp_confirm"),
+    path("password_reset_otp/complete/", ResetOniichanPasswordOTPCompleteAPIView.as_view(), name="password_reset_otp_confirm"),
     # path("suspend_user/<str:email>/", SuspendUserApiView.as_view(), name="suspend_user"), 
     path("change_password/<str:email>/", ChangeOniichanPassword.as_view(), name="change_user_password"),
     path("logout/", LogOniichan.as_view(), name="logout_user"),
