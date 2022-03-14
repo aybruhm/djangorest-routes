@@ -1,46 +1,45 @@
-# -------------------
-# Python -> Imports
-# -------------------
-from urllib import response
-from django.http import HttpRequest
+"""Python Imports"""
 
-# ------------------------------
-# Local app -> Django Imports
-# ------------------------------
-from django.contrib.auth import authenticate, get_user_model, \
-    logout, login, hashers
-from django.core.exceptions import ImproperlyConfigured
-from django.shortcuts import render
 
-# -----------------------------------------------------
-# Installed third-party app -> Rest Framework Imports
-# -----------------------------------------------------
+"""Rest Framework Imports"""
 from rest_framework import status, views
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 
-# -----------------------------------
-# Custom app -> Core Imports
-# -----------------------------------
-from rest_api_payload import success_response, error_response
 
+"""Third Party Imports"""
+from django_rest_passwordreset.signals import reset_password_token_created # noqa
+from rest_api_payload import success_response, error_response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+
+
+"""Custom app -> Rest Auth Imports"""
+from rest_auth.utils import send_html_to_email
 from rest_auth.serializers import (
     RegisterUserSerializer, ChangeUserPasswordSerializer, 
     EmptySerializer, \
     OTPSerializer, ResendOTPSerializer,
     SuspendUserSerializer, UserLoginSerializer, 
-    UserSerializer
+    UserSerializer, UserLoginObtainPairSerializer
 )
-from rest_auth.utils import send_html_to_email
 from rest_auth.otp_verifications import OTPVerification
 
-from django_rest_passwordreset.signals import reset_password_token_created # noqa
+
+"""Django Imports"""
 from django.dispatch import receiver
+from django.http import HttpRequest
+from django.contrib.auth import authenticate, get_user_model, \
+    logout, login, hashers
+from django.core.exceptions import ImproperlyConfigured
+from django.shortcuts import render
 from django.urls import reverse
 
 
+
+"""Class Instantiations"""
 otp_verify = OTPVerification()
 User = get_user_model()
 
@@ -103,6 +102,16 @@ class RegisterOniichan(views.APIView):
         payload = error_response(status="400 bad request", message=serializer.errors)
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
         
+
+class LoginOniichan(TokenObtainPairView):
+    """Inherits TokenObtainPairView from rest_framework simplejwt"""
+    serializer_class = UserLoginObtainPairSerializer
+    
+
+class RefreshLoginOniichan(TokenRefreshView):
+    """Inherits TokenRefreshView from rest_framework simplejwt"""
+    serializer_class = TokenRefreshSerializer
+    
         
 class ConfirmOniichanOTP(views.APIView):
     serializer_class = OTPSerializer
