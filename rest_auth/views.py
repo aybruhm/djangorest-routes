@@ -60,8 +60,9 @@ class Konnichiwa(views.APIView):
                 "change_password": self.BASE_URL + "rest_auth/change_password/<str:email>/",
                 "reset_password (token)": self.BASE_URL + "rest_auth/password_reset/",
                 "reset_password_confirm (token)": self.BASE_URL + "rest_auth/password_reset/confirm/",
-                "rest_password_otp (otp)": self.BASE_URL + "rest_auth/reset_password_otp/<str:email>/",
-                "rest_password_otp_confirm (otp)": self.BASE_URL + "rest_auth/reset_password_otp/confirm/",
+                "reset_password_otp (otp)": self.BASE_URL + "rest_auth/password_reset_otp/",
+                "reset_password_otp_confirm (otp)": self.BASE_URL + "rest_auth/password_reset_otp/confirm/",
+                "reset_password_otp_complete (otp)": self.BASE_URL + "rest_auth/password_reset_otp/complete/",
                 "suspend_user": self.BASE_URL + "rest_auth/suspend_user/<str:email>/"
             }
         }

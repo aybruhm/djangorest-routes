@@ -1,6 +1,6 @@
-======================================================
-Authentication Routes As A Service - Django Rest Auth
-======================================================
+===================================
+Authentication Routes As A Service
+===================================
 
 description::long description
 
