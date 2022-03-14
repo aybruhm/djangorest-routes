@@ -6,15 +6,11 @@ from rest_api_payload import success_response
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """
-    A serializer that display the user information
-    """
+    """Serializer that displays a user information"""
 
     class Meta:
         model = User
-        fields = [
-            "id", "firstname", "lastname", "email"
-        ]
+        fields = ["id", "firstname", "lastname", "email"]
         extra_kwargs = {
             "email": {
                 "read_only": True
@@ -23,9 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
-    """
-    A serializer for registering the user
-    """
+    """Serializer for registering a user"""
 
     class Meta:
         model = User
@@ -36,9 +30,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-    """
-    A user serializer for logging in the user
-    """
+    """Serializer for loggin in user"""
     email = serializers.EmailField(max_length=300, required=True)
     password = serializers.CharField(required=True)
     
@@ -65,37 +57,37 @@ class UserLoginObtainPairSerializer(TokenObtainPairSerializer):
     
 
 class ChangeUserPasswordSerializer(serializers.Serializer):
-    """
-    Change current user password
-    """
+    """Serializer to change user password"""
     email = serializers.EmailField(required=True)
     current_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
     repeat_new_password = serializers.CharField(required=True)
+    
+    
+class ResetPasswordOTPSerializer(serializers.Serializer):
+    """Serializer to reset password using OTP"""
+    email = serializers.EmailField(max_length=255, required=True)
+    
+    
+class CompleteResetPasswordOTPSerializer(serializers.Serializer):
+    """Serializer to change password after OTP validation for reset password"""
+    email = serializers.EmailField(max_length=255, required=True)
+    password = serializers.CharField(max_length=255, required=True)
+    confirm_password = serializers.CharField(max_length=255, required=True)
 
 
 class OTPSerializer(serializers.Serializer):
-    """
-    Serializer to validate the otp code and user via email
-    """
+    """Serializer to validate the otp code and user via email"""
     email = serializers.EmailField(max_length=255, required=True)
     otp_code = serializers.CharField(required=True, max_length=6)
 
 
 class ResendOTPSerializer(serializers.Serializer):
-    """
-    Serializer to resend OTP code to user's email
-    """
+    """Serializer to resend OTP code to user's email"""
     email = serializers.EmailField(max_length=255, required=True)
-
-
-class EmptySerializer(serializers.Serializer):
-    pass
-
+    
 
 class SuspendUserSerializer(serializers.Serializer):
-    """
-    Serializer to suspend a user
-    """
+    """Serializer to suspend a user"""
     username = serializers.CharField(max_length=255, required=True)
     is_active = serializers.BooleanField(required=True)
