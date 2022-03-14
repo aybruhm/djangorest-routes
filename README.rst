@@ -1,13 +1,14 @@
-===================
-Django Rest Auth
-===================
+======================================================
+Authentication Routes As A Service - Django Rest Auth
+======================================================
 
+description::long description
 
 
 
 Abstract
 -----------
-Bootstrap your spa startup with this amazing django rest authentication reusable app.
+Bootstrap your single page application with this amazing rest authentication reusable app built using django/djangorestframework
 
 Quick Start
 -----------
