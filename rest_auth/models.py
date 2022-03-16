@@ -15,7 +15,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=11, unique=True, default=0)
     email = models.EmailField(db_index=True, unique=True)
     otp_code = HashidField(salt=HASH_FIELD_SALT, min_length=6, unique=True, blank=True, null=True)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     is_email_active = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
