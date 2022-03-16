@@ -12,7 +12,7 @@ class OTPVerification:
     DIGITS = "1234567890"
     EXPIRE_TIME = 300
 
-    def generate_otp_code(self, email):
+    def generate_otp_code(self, email:str):
 
         """Get user email"""
         user = User.objects.get(email=email)
@@ -29,7 +29,7 @@ class OTPVerification:
             otp_code = user.otp_code
             return otp_code
 
-    def send_otp_code_to_email(self, email, first_name):
+    def send_otp_code_to_email(self, email:str, first_name:str):
         """Generate user otp code"""
         otp_code = self.generate_otp_code(email=email)
         
@@ -50,8 +50,27 @@ class OTPVerification:
             context=context,
         )
         return otp_code
+    
+    def send_password_reset_otp_code_to_email(self, email:str):
+            
+        """Generate otp code for password reset"""
+        otp_code = self.generate_otp_code(email=email)
+        
+        """Get user"""
+        user = User.objects.get(email=email)
+        
+        """Context for email template"""
+        context = {"otp_code": otp_code.id, "firstname": user.firstname}
+        
+        """Send password reset html email to user"""
+        send_html_to_email(
+            to_list=[email], subject="Django Rest Auth - OTP PASSWORD RESET",
+            template_name="emails/authentication/password_reset_otp.html",
+            context=context
+        )
+        return otp_code
 
-    def verify_otp_code_from_email(self, otp_code, email):
+    def verify_otp_code_from_email(self, otp_code:str, email:str):
 
         """Get user email"""
         user = User.objects.get(email=email)
