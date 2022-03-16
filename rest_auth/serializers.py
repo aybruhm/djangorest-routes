@@ -1,8 +1,11 @@
-from rest_auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_api_payload import success_response
+from django.conf import settings
 
+
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -47,7 +50,7 @@ class UserLoginObtainPairSerializer(TokenObtainPairSerializer):
         data.update({'lastname': self.user.lastname})
         data.update({'id': self.user.id})
         
-        """and everything else you want to send in the response"""
+        """Return custom data in the response"""
         payload = success_response(
             status="success",
             message="Login successful",
