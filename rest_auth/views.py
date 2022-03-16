@@ -43,27 +43,30 @@ User = get_user_model()
 class Konnichiwa(views.APIView):
     
     PROTOCOL = "http://"
-    HOST_NAME = "127.0.0.1:8000/"
-    BASE_URL = PROTOCOL + HOST_NAME
     
     def get(self, request:HttpRequest) -> Response:
+        
+        
+        HOST_NAME = request.get_host() + "/"
+        BASE_URL = self.PROTOCOL + HOST_NAME
+        
                     
         welcome_data = {
             "yoshi!": "If you made it here, I'm proud of you!",
             "routes": {
-                "register": self.BASE_URL + "rest_auth/register/",
-                "login (jwt)": self.BASE_URL + "rest_auth/login/token/",
-                "login (refresh jwt)": self.BASE_URL + "rest_auth/login/token/refresh/",
-                "confirm_otp": self.BASE_URL + "rest_auth/confirm_otp/",
-                "resend_otp_code": self.BASE_URL + "rest_auth/resend_otp_code/",
-                "logout": self.BASE_URL + "rest_auth/logout/",
-                "change_password": self.BASE_URL + "rest_auth/change_password/<str:email>/",
-                "reset_password (token)": self.BASE_URL + "rest_auth/password_reset/",
-                "reset_password_confirm (token)": self.BASE_URL + "rest_auth/password_reset/confirm/",
-                "reset_password_otp (otp)": self.BASE_URL + "rest_auth/password_reset_otp/",
-                "reset_password_otp_confirm (otp)": self.BASE_URL + "rest_auth/password_reset_otp/confirm/",
-                "reset_password_otp_complete (otp)": self.BASE_URL + "rest_auth/password_reset_otp/complete/",
-                "suspend_user": self.BASE_URL + "rest_auth/suspend_user/<str:email>/"
+                "register": BASE_URL + "rest_auth/register/",
+                "login (jwt)": BASE_URL + "rest_auth/login/token/",
+                "login (refresh jwt)": BASE_URL + "rest_auth/login/token/refresh/",
+                "confirm_otp": BASE_URL + "rest_auth/confirm_otp/",
+                "resend_otp_code": BASE_URL + "rest_auth/resend_otp_code/",
+                "logout": BASE_URL + "rest_auth/logout/",
+                "change_password": BASE_URL + "rest_auth/change_password/<str:email>/",
+                "reset_password (token)": BASE_URL + "rest_auth/password_reset/",
+                "reset_password_confirm (token)": BASE_URL + "rest_auth/password_reset/confirm/",
+                "reset_password_otp (otp)": BASE_URL + "rest_auth/password_reset_otp/",
+                "reset_password_otp_confirm (otp)": BASE_URL + "rest_auth/password_reset_otp/confirm/",
+                "reset_password_otp_complete (otp)": BASE_URL + "rest_auth/password_reset_otp/complete/",
+                "suspend_user": BASE_URL + "rest_auth/suspend_user/<str:email>/"
             }
         }
         return Response(data=welcome_data, status=status.HTTP_200_OK)
