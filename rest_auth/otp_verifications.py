@@ -60,7 +60,7 @@ class OTPVerification:
         user = User.objects.get(email=email)
         
         """Context for email template"""
-        context = {"otp_code": otp_code.id, "firstname": user.firstname}
+        context = {"otp__code": otp_code.id, "firstname": user.firstname}
         
         """Send password reset html email to user"""
         send_html_to_email(
