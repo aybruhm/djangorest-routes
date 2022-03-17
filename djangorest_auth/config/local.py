@@ -34,13 +34,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = '/static/'
 
 
-# EMAIL CONFIGURATION
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+# Email Configuration
 
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_PORT = env("EMAIL_PORT")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = "djangorest-auth@digitalstade.com"

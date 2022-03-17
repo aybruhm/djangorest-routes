@@ -8,9 +8,9 @@ https://docs.djangoproject.com/en/4.0/howto/deployment/wsgi/
 """
 
 import os
-
+from djangorest_auth.config.base import RUNTIME_ENVIRON
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangorest_auth.config.local')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', RUNTIME_ENVIRON)
 
 application = get_wsgi_application()

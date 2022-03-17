@@ -2,11 +2,12 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from djangorest_auth.config.base import RUNTIME_ENVIRON
 
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangorest_auth.config.local')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', RUNTIME_ENVIRON)
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
