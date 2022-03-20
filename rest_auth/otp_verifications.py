@@ -12,10 +12,12 @@ class OTPVerification:
     DIGITS = "1234567890"
     EXPIRE_TIME = 300
 
-    def generate_otp_code(self, email:str):
+    def generate_otp_code(self, user_email:str):
+        
+        print("User: ", User.objects.all())
 
         """Get user email"""
-        user = User.objects.get(email=email)
+        user = User.objects.get(email=user_email)
 
         """Confirm if user exists"""
         if user:
@@ -31,7 +33,9 @@ class OTPVerification:
 
     def send_otp_code_to_email(self, email:str, first_name:str):
         """Generate user otp code"""
-        otp_code = self.generate_otp_code(email=email)
+        otp_code = self.generate_otp_code(user_email=email)
+        
+
         
         """Gets current email making request"""
         user = User.objects.get(email=email)
