@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_api_payload import success_response
-from django.conf import settings
 
 
 User = get_user_model()
@@ -31,6 +30,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             "password": {"write_only": True},
             "email": {"write_only": True},
         }
+        
+    def create(self, validated_data) -> User:
+        user = User.objects.create(**validated_data)
+        user.save()
+        return user
 
 
 class UserLoginSerializer(serializers.Serializer):
