@@ -21,7 +21,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['firstname', 'lastname', 'phone_number', 'username']
-
+    
+    """Set User objeccts manager to UserManager"""
     objects = UserManager()
 
     def __str__(self):
@@ -29,3 +30,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         verbose_name_plural = "Users"
+        
+        
