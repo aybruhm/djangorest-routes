@@ -6,7 +6,8 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def create_user(self, firstname:str, lastname:str, email:str, phone_number:str, password=None):
-
+        """Creates normal user"""
+        
         if email is None:
             raise TypeError('Users must have an email address')
 
@@ -22,7 +23,9 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, firstname, lastname, phone_number, email, password):
+    def create_superuser(self, firstname:str, lastname:str, phone_number:str, email:str, password=None):
+        """Creates super user"""
+        
         if firstname is None:
             raise TypeError('Users must have a Firstname')
 
@@ -35,7 +38,11 @@ class UserManager(BaseUserManager):
         if password is None:
             raise TypeError('Superusers must have a password.')
 
-        user = self.create_user(firstname=firstname, lastname=lastname, email=email, phone_number=phone_number, password=password)
+        user = self.create_user(
+            firstname=firstname, lastname=lastname, 
+            email=email, phone_number=phone_number, 
+            password=password
+        )
         user.is_superuser = True
         user.is_staff = True
         user.is_active = True
