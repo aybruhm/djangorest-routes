@@ -83,6 +83,9 @@ class OTPVerification:
         if int(otp_code) == user.otp_code.id:
             user.is_active = True
             user.is_email_active = True
+            
+            """Remove otp code from user"""
+            user.otp_code = ""
             user.save()
             return True
 
