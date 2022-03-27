@@ -78,7 +78,7 @@ class OTPVerification:
         """
             
         """Generate otp code for password reset"""
-        otp_code = self.generate_otp_code(email=email)
+        otp_code = self.generate_otp_code(user_email=email)
         
         """Get user"""
         user = User.objects.get(email=email)
