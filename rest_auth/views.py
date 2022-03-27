@@ -5,13 +5,13 @@
 from rest_framework import status, views
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
 
 """Third Party Imports"""
 from django_rest_passwordreset.signals import reset_password_token_created # noqa
 from rest_api_payload import success_response, error_response
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
 
 """Custom app -> Rest Auth Imports"""
@@ -77,27 +77,24 @@ class RegisterOniichan(views.APIView):
     permission_classes = [AllowAny]
     
     def post(self, request:HttpRequest) -> Response:
+        """
+        It creates a new user.
+        
+        :param request: HttpRequest
+        :type request: HttpRequest
+        :return: A JSON response with a status code and a message.
+        """
         serializer = self.serializer_class(data=request.data)
         
         if serializer.is_valid():
             serializer.save()
                 
-            """Get user email address and first name"""
-            email = serializer.data.get("email")
-            firstname = serializer.data.get("firstname")
-
-            """Send otp code to user's email address"""
-            otp_sent = otp_verify.send_otp_code_to_email(email=email, first_name=firstname)
-
-            """Checks if otp code has been sent, return user data and otp success message"""
-            if otp_sent:
-                
-                payload = success_response(
-                    status="201 created",
-                    message="Oniichan, an OTP code has been sent to your email address!",
-                    data=serializer.data
-                )
-                return Response(data=payload, status=status.HTTP_200_OK)
+            payload = success_response(
+                status="201 created",
+                message="Oniichan, an OTP code has been sent to your email address!",
+                data=serializer.data
+            )
+            return Response(data=payload, status=status.HTTP_200_OK)
 
         payload = error_response(status="400 bad request", message=serializer.errors)
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
