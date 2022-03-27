@@ -6,7 +6,7 @@ from rest_auth.views import (
     LogOniichan, email_otp_verify,
     ResetOniichanPasswordOTPAPIView,
     ConfirmResetOniichanPasswordOTPAPIView,
-    ResetOniichanPasswordOTPCompleteAPIView
+    ResetOniichanPasswordOTPCompleteAPIView, welcome_user
 )
 from django.urls import path
 
@@ -28,5 +28,6 @@ urlpatterns = [
     
     
     # Email 
-    path("otp_verify/", email_otp_verify, name="email_otp_verify ")
+    path("otp_verify/", email_otp_verify, name="email_otp_verify "), 
+    path("welcome/", welcome_user, name="welcome_user")
 ]

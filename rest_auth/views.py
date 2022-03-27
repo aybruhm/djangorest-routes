@@ -614,3 +614,7 @@ class LogOniichan(views.APIView):
 
 def email_otp_verify(request):
     return render(request, "emails/authentication/otp_verify.html")
+
+
+def welcome_user(request):
+    return render(request, "emails/users/welcome.html")
