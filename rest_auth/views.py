@@ -132,7 +132,7 @@ class ConfirmOniichanOTP(views.APIView):
             except User.DoesNotExist:
                 payload = {
                     "status": "failed",
-                    "message": "Credentials is not in our records!"
+                    "message": "Credentials does not match our record!"
                 }
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
