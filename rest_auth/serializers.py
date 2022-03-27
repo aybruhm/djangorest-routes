@@ -52,6 +52,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         :return: The user object.
         """
         user = User.objects.create(**validated_data)
+        user.set_password(user.password)
         user.save()
 
         """Send otp code to user's email address"""
