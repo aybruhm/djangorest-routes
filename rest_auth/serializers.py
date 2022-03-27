@@ -60,17 +60,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         
         if otp_sent:
             return user
-        return None
-
-
-class UserLoginSerializer(serializers.Serializer):
-    """Serializer for loggin in user"""
-    email = serializers.EmailField(max_length=300, required=True)
-    password = serializers.CharField(
-        write_only=True,
-        required=True,
-        style={'input_type': 'password', 'placeholder': 'Password'}
-    )
     
 
 class UserLoginObtainPairSerializer(TokenObtainPairSerializer):

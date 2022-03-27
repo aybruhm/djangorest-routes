@@ -14,7 +14,7 @@ class UserManager(BaseUserManager):
         if phone_number is None:
             raise TypeError("User must have a phone number")
 
-        user = self.model(
+        user = self.create_user(
             firstname=firstname, lastname=lastname,
             email=self.normalize_email(email), phone_number=phone_number
         )
