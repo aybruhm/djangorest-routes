@@ -56,7 +56,7 @@ class Konnichiwa(views.APIView):
             "routes": {
                 "register": BASE_URL + "rest_auth/register/",
                 "login (jwt)": BASE_URL + "rest_auth/login/token/",
-                "login (refresh jwt)": BASE_URL + "rest_auth/login/token/refresh/",
+                "login (refresh jwt)": BASE_URL + "rest_auth/login/refresh/",
                 "confirm_otp": BASE_URL + "rest_auth/confirm_otp/",
                 "resend_otp_code": BASE_URL + "rest_auth/resend_otp_code/",
                 "logout": BASE_URL + "rest_auth/logout/",
@@ -589,7 +589,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     )
         
         
-class LogOniichan(views.APIView):
+class LogOniichanOut(views.APIView):
     """
     Removes the authenticated user's ID from the request and flushes their
     session data.

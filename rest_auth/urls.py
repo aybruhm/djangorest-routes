@@ -3,7 +3,7 @@ from rest_auth.views import (
     ResendOniichanOTP, LoginOniichan,
     RefreshLoginOniichan,
     ChangeOniichanPassword, Konnichiwa,
-    LogOniichan, email_otp_verify,
+    LogOniichanOut, email_otp_verify,
     ResetOniichanPasswordOTPAPIView,
     ConfirmResetOniichanPasswordOTPAPIView,
     ResetOniichanPasswordOTPCompleteAPIView, welcome_user
@@ -24,7 +24,7 @@ urlpatterns = [
     path("password_reset_otp/complete/", ResetOniichanPasswordOTPCompleteAPIView.as_view(), name="password_reset_otp_confirm"),
     # path("suspend_user/<str:email>/", SuspendUserApiView.as_view(), name="suspend_user"), 
     path("change_password/<str:email>/", ChangeOniichanPassword.as_view(), name="change_user_password"),
-    path("logout/", LogOniichan.as_view(), name="logout_user"),
+    path("logout/", LogOniichanOut.as_view(), name="logout_user"),
     
     
     # Email 
