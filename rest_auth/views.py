@@ -335,9 +335,15 @@ class ResendOniichanOTP(views.APIView):
 class ChangeOniichanPassword(views.APIView):
     permissions_classes = [IsAuthenticated]
     serializer_class = ChangeUserPasswordSerializer
-    user_serializer = UserSerializer
     
     def get_current_user(self, email:str) -> Response:
+        """
+        It gets the current user.
+        
+        :param email: The email of the user you want to get
+        :type email: str
+        :return: A user object
+        """
         
         try:
             user = User.objects.get(is_active=True, email=email)
@@ -386,13 +392,10 @@ class ChangeOniichanPassword(views.APIView):
                 user.set_password(new_password)
                 user.save()
                 
-                """Get serialized data for user"""
-                user_new_data = self.user_serializer(user)
-                
                 payload = success_response(
                     status="202 accepted",
-                    message="User password changed!",
-                    data=user_new_data
+                    message="Oniichan password changed!",
+                    data={}
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
 
@@ -571,13 +574,18 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     """ 
     
     "Context to be applied on email"
+    token_redirect_url = instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm'))
+    token_key = reset_password_token.key
+
     context = {
+        'user': reset_password_token.user,
+        'protocol': 'http',
+        'domain': '127.0.0.1:8000',
         'email': reset_password_token.user.email,
         'reset_password_url': "{}?token={}".format(
-            instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
-            reset_password_token.key),
-        'site_name': "Django Rest Authentication",
-        'from_email': "noreply@site.com"
+            token_redirect_url,
+            token_key
+        )
     }
 
     """Send html e-mail to the user"""
