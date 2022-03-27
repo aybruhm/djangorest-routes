@@ -1,9 +1,22 @@
+"""Django Imports"""
 from django.contrib.auth import get_user_model
+
+
+"""Rest Framework Imports"""
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+
+"""Third Party Imports"""
 from rest_api_payload import success_response
 
 
+"""Custom app -> Rest Auth Imports"""
+from rest_auth.otp_verifications import OTPVerification
+
+
+"""Class Instantiations"""
+otp_verify = OTPVerification()
 User = get_user_model()
 
 
@@ -31,10 +44,22 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             "email": {"write_only": True},
         }
         
-    def create(self, validated_data) -> User:
+    def create(self, validated_data):
+        """
+        Create a new user
+        
+        :param validated_data: The data that was sent to the server
+        :return: The user object.
+        """
         user = User.objects.create(**validated_data)
         user.save()
-        return user
+
+        """Send otp code to user's email address"""
+        otp_sent = otp_verify.send_otp_code_to_email(email=user.email, first_name=user.firstname)
+        
+        if otp_sent:
+            return user
+        return None
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -62,6 +87,7 @@ class UserLoginObtainPairSerializer(TokenObtainPairSerializer):
             data=data
         )
         return payload
+
     
 
 class ChangeUserPasswordSerializer(serializers.Serializer):
