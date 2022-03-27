@@ -66,7 +66,11 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
     """Serializer for loggin in user"""
     email = serializers.EmailField(max_length=300, required=True)
-    password = serializers.CharField(required=True)
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={'input_type': 'password', 'placeholder': 'Password'}
+    )
     
 
 class UserLoginObtainPairSerializer(TokenObtainPairSerializer):
@@ -94,9 +98,21 @@ class UserLoginObtainPairSerializer(TokenObtainPairSerializer):
 class ChangeUserPasswordSerializer(serializers.Serializer):
     """Serializer to change user password"""
     email = serializers.EmailField(required=True)
-    current_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-    repeat_new_password = serializers.CharField(required=True)
+    current_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={'input_type': 'password', 'placeholder': 'Current Password'}
+    )
+    new_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={'input_type': 'password', 'placeholder': 'New Password'}
+    )
+    repeat_new_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={'input_type': 'password', 'placeholder': 'Repeat New Password'}    
+    )
     
     
 class ResetPasswordOTPSerializer(serializers.Serializer):
@@ -107,8 +123,18 @@ class ResetPasswordOTPSerializer(serializers.Serializer):
 class CompleteResetPasswordOTPSerializer(serializers.Serializer):
     """Serializer to change password after OTP validation for reset password"""
     email = serializers.EmailField(max_length=255, required=True)
-    password = serializers.CharField(max_length=255, required=True)
-    confirm_password = serializers.CharField(max_length=255, required=True)
+    password = serializers.CharField(
+        max_length=255, 
+        write_only=True,
+        required=True,
+        style={'input_type': 'password', 'placeholder': 'Password'}                                 
+    )
+    confirm_password = serializers.CharField(
+        max_length=255, 
+        write_only=True,
+        required=True,
+        style={'input_type': 'password', 'placeholder': 'Confirm Password'}
+    )
 
 
 class OTPSerializer(serializers.Serializer):
