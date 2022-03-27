@@ -202,19 +202,19 @@ class ResendOniichanOTP(views.APIView):
             try:
                 user = User.objects.get(email=otp_data.get('email'))
             except User.DoesNotExist:
-                payload = {
-                    "status": "failed",
-                    "message": "Credentials does not match our record!"
-                }
+                payload = error_response(
+                    status="failed",
+                    message="Credentials does not match our record!"
+                )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
             """Check if a user active and email active flag is True"""
             if user.is_active is True and user.is_email_active is True:
                 
-                payload = {
-                    "status": "success",
-                    "message": "You are already verified!"
-                }
+                payload = success_response(
+                    status="success",
+                    message="You are already verified!", statusdata={}
+                )
                 return Response(data=payload,
                                 status=status.HTTP_200_OK)
 
@@ -228,18 +228,19 @@ class ResendOniichanOTP(views.APIView):
                 """Check if otp has been sent, then send a response message"""
                 if otp_sent:
                     
-                    payload = {
-                        "status": "success",
-                        "message": "An OTP code has been sent to the provided email address."
-                    }
+                    payload = success_response(
+                        status="success",
+                        message="An OTP code has been sent to the provided email address.",
+                        data={}
+                    )
                     return Response(data=payload, status=status.HTTP_201_CREATED)
 
             else:
                 """Return a response message telling them to try again"""
-                payload = {
-                    "status": "failed",
-                    "message": "Something went wrong! Please try again."
-                }
+                payload = error_response(
+                    status="failed",
+                    message="Something went wrong! Please try again."
+                )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
         
     
