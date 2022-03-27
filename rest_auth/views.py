@@ -52,7 +52,7 @@ class Konnichiwa(views.APIView):
         
                     
         welcome_data = {
-            "yoshi!": "If you made it here, I'm proud of you!",
+            "yosh!": "If you made it here, I'm proud of you!",
             "routes": {
                 "register": BASE_URL + "rest_auth/register/",
                 "login (jwt)": BASE_URL + "rest_auth/login/token/",
