@@ -1,4 +1,3 @@
-# from django.contrib.auth.models import BaseUserManager
 from typing import Type
 from django.contrib.auth.base_user import BaseUserManager
 
@@ -26,7 +25,7 @@ class UserManager(BaseUserManager):
         if username is None:
             raise Type("User must have a username")
 
-        user = self.create_user(
+        user = self.model(
             firstname=firstname,
             lastname=lastname,
             username=username,
