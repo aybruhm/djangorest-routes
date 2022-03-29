@@ -1,0 +1,15 @@
+language: python
+matrix:
+  include:
+    - python: 3.9
+      dist: xenial
+      sudo: true
+before_install:
+    - pip install --upgrade setuptools pip
+    - pip install -r requirements.txt
+    - pip install coveralls
+script:
+  - python manage.py test
+  - coverage run --source="rest_auth/" manage.py test 
+after_success:
+  - coveralls
