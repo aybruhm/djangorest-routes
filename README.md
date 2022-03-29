@@ -13,7 +13,7 @@ Bootstrap your single page application with this amazing rest authentication reu
 
 
 **Below**: *Screenshot from the browsable API*
-
+![routes](https://user-images.githubusercontent.com/55067204/160565837-3f022306-f1f5-4de4-b7c2-430679f209e1.png)
 
 
 Requirements
