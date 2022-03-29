@@ -1,5 +1,5 @@
 
-# Authentication Routes As A Service
+# 🔐 AR as a Service
 
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -11,7 +11,7 @@ description::long description
 
 Abstract
 -----------
-Bootstrap your single page application with this amazing rest authentication reusable app built using django/djangorestframework
+description::short description
 
 
 ![routes](https://user-images.githubusercontent.com/55067204/160565837-3f022306-f1f5-4de4-b7c2-430679f209e1.png)
