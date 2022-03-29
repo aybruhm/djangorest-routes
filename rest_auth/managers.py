@@ -1,4 +1,5 @@
 # from django.contrib.auth.models import BaseUserManager
+from typing import Type
 from django.contrib.auth.base_user import BaseUserManager
 
 
@@ -10,6 +11,7 @@ class UserManager(BaseUserManager):
         firstname: str,
         lastname: str,
         email: str,
+        username: str,
         phone_number: str,
         password=None,
     ):
@@ -20,10 +22,14 @@ class UserManager(BaseUserManager):
 
         if phone_number is None:
             raise TypeError("User must have a phone number")
+        
+        if username is None:
+            raise Type("User must have a username")
 
         user = self.create_user(
             firstname=firstname,
             lastname=lastname,
+            username=username,
             email=self.normalize_email(email),
             phone_number=phone_number,
         )
@@ -36,6 +42,7 @@ class UserManager(BaseUserManager):
         self,
         firstname: str,
         lastname: str,
+        username: str,
         phone_number: str,
         email: str,
         password=None,
@@ -58,6 +65,7 @@ class UserManager(BaseUserManager):
             firstname=firstname,
             lastname=lastname,
             email=email,
+            username=username,
             phone_number=phone_number,
             password=password,
         )
