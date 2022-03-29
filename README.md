@@ -44,13 +44,11 @@ Quick Start
 
 1. Install using `pip`:
 ```
-
     pip install djangorest-auth
 ```
 
 2. Add "djangorest_auth" to your INSTALLED_APPS setting like this:
 ```
-
     INSTALLED_APPS = [
         ...
         'djangorest_auth',
@@ -59,7 +57,6 @@ Quick Start
 
 2. Include the polls URLconf in your project urls.py like this:
 ```
-
     path('rest_auth/', include('djangorest_auth.urls')),
 ```
 
