@@ -18,11 +18,12 @@ from django.urls import path, include
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    
+    path("admin/", admin.site.urls),
     # Django rest auth URLs
     path("rest_auth/", include("rest_auth.urls")),
-    
     # Password Reset URLs
-    path('rest_auth/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
+    path(
+        "rest_auth/password_reset/",
+        include("django_rest_passwordreset.urls", namespace="password_reset"),
+    ),
 ]

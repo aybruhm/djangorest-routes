@@ -1,12 +1,9 @@
-from djangorest_auth.config.base import * #noqa
+from djangorest_auth.config.base import *
 
 
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS += [
-    "djangorest_auth.digitalstade.com",
-    "djangorest_auth.herokuapp.com"
-]
+ALLOWED_HOSTS += ["djangorest_auth.digitalstade.com", "djangorest_auth.herokuapp.com"]
 
 
 # Database
@@ -24,12 +21,12 @@ INSTALLED_APPS += []
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_ROOT = "staticfiles"
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 
 # EMAIL CONFIGURATION
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_PORT = env("EMAIL_PORT")
