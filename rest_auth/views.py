@@ -10,18 +10,22 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
 
 """Third Party Imports"""
-from django_rest_passwordreset.signals import reset_password_token_created # noqa
+from django_rest_passwordreset.signals import reset_password_token_created  # noqa
 from rest_api_payload import success_response, error_response
 
 
 """Custom app -> Rest Auth Imports"""
 from rest_auth.utils import send_html_to_email
 from rest_auth.serializers import (
-    CompleteResetPasswordOTPSerializer, RegisterUserSerializer, 
-    ChangeUserPasswordSerializer, OTPSerializer, 
-    ResendOTPSerializer, ResetPasswordOTPSerializer,
+    CompleteResetPasswordOTPSerializer,
+    RegisterUserSerializer,
+    ChangeUserPasswordSerializer,
+    OTPSerializer,
+    ResendOTPSerializer,
+    ResetPasswordOTPSerializer,
     SuspendUserSerializer,
-    UserSerializer, UserLoginObtainPairSerializer
+    UserSerializer,
+    UserLoginObtainPairSerializer,
 )
 from rest_auth.otp_verifications import OTPVerification
 
@@ -34,23 +38,20 @@ from django.shortcuts import render
 from django.urls import reverse
 
 
-
 """Class Instantiations"""
 otp_verify = OTPVerification()
 User = get_user_model()
 
 
 class Konnichiwa(views.APIView):
-    
+
     PROTOCOL = "http://"
-    
-    def get(self, request:HttpRequest) -> Response:
-        
-        
+
+    def get(self, request: HttpRequest) -> Response:
+
         HOST_NAME = request.get_host() + "/"
         BASE_URL = self.PROTOCOL + HOST_NAME
-        
-                    
+
         welcome_data = {
             "yosh!": "If you made it here, I'm proud of you!",
             "routes": {
@@ -62,12 +63,15 @@ class Konnichiwa(views.APIView):
                 "logout": BASE_URL + "rest_auth/logout/",
                 "change_password": BASE_URL + "rest_auth/change_password/<str:email>/",
                 "reset_password (token)": BASE_URL + "rest_auth/password_reset/",
-                "reset_password_confirm (token)": BASE_URL + "rest_auth/password_reset/confirm/",
+                "reset_password_confirm (token)": BASE_URL
+                + "rest_auth/password_reset/confirm/",
                 "reset_password_otp (otp)": BASE_URL + "rest_auth/password_reset_otp/",
-                "reset_password_otp_confirm (otp)": BASE_URL + "rest_auth/password_reset_otp/confirm/",
-                "reset_password_otp_complete (otp)": BASE_URL + "rest_auth/password_reset_otp/complete/",
-                "suspend_user": BASE_URL + "rest_auth/suspend_user/<str:email>/"
-            }
+                "reset_password_otp_confirm (otp)": BASE_URL
+                + "rest_auth/password_reset_otp/confirm/",
+                "reset_password_otp_complete (otp)": BASE_URL
+                + "rest_auth/password_reset_otp/complete/",
+                "suspend_user": BASE_URL + "rest_auth/suspend_user/<str:email>/",
+            },
         }
         return Response(data=welcome_data, status=status.HTTP_200_OK)
 
@@ -75,51 +79,52 @@ class Konnichiwa(views.APIView):
 class RegisterOniichan(views.APIView):
     serializer_class = RegisterUserSerializer
     permission_classes = [AllowAny]
-    
-    def post(self, request:HttpRequest) -> Response:
+
+    def post(self, request: HttpRequest) -> Response:
         """
         It creates a new user.
-        
+
         :param request: HttpRequest
         :type request: HttpRequest
         :return: A JSON response with a status code and a message.
         """
         serializer = self.serializer_class(data=request.data)
-        
+
         if serializer.is_valid():
             serializer.save()
-                
+
             payload = success_response(
                 status="201 created",
                 message="Oniichan, an OTP code has been sent to your email address!",
-                data=serializer.data
+                data=serializer.data,
             )
             return Response(data=payload, status=status.HTTP_200_OK)
 
         payload = error_response(status="400 bad request", message=serializer.errors)
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-        
+
 
 class LoginOniichan(TokenObtainPairView):
     """Inherits TokenObtainPairView from rest_framework simplejwt"""
+
     serializer_class = UserLoginObtainPairSerializer
-    
+
 
 class RefreshLoginOniichan(TokenRefreshView):
     """Inherits TokenRefreshView from rest_framework simplejwt"""
+
     serializer_class = TokenRefreshSerializer
-    
-        
+
+
 class ConfirmOniichanOTP(views.APIView):
     serializer_class = OTPSerializer
     permission_classes = [AllowAny]
-    
-    
-    def post(self, request:HttpRequest) -> Response:
+
+    def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
-        
+
         if serializer.is_valid():
-            
+
             """Get serialized data"""
             otp_data = serializer.data
 
@@ -129,7 +134,7 @@ class ConfirmOniichanOTP(views.APIView):
             except User.DoesNotExist:
                 payload = {
                     "status": "failed",
-                    "message": "Credentials does not match our record!"
+                    "message": "Credentials does not match our record!",
                 }
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
@@ -138,85 +143,78 @@ class ConfirmOniichanOTP(views.APIView):
 
                 """Verifies user with the provided OTP"""
                 otp_valid = otp_verify.verify_otp_code_from_email(
-                    otp_code=otp_data.get("otp_code"), email=otp_data.get("email"))
-                
+                    otp_code=otp_data.get("otp_code"), email=otp_data.get("email")
+                )
+
                 """If the otp validation is True, set the user active and email active to True"""
                 if otp_valid is True:
-                    
+
                     """Gets user email"""
                     user_email = otp_data.get("email")
-                    
+
                     """Context for html email"""
-                    context = {
-                        "firstname": user.firstname
-                    }
-                    
+                    context = {"firstname": user.firstname}
+
                     """Sends Welcome HTML Email to user"""
                     send_html_to_email(
-                        to_list=[user_email], subject="WELCOME",
-                        template_name="emails/users/welcome.html", 
+                        to_list=[user_email],
+                        subject="WELCOME",
+                        template_name="emails/users/welcome.html",
                         context=context,
                     )
 
                     """Return a response message that lets the user know the otp code has been verified"""
                     payload = {
                         "status": "success",
-                        "message": "OTP code has been verified!"
+                        "message": "OTP code has been verified!",
                     }
                     return Response(data=payload, status=status.HTTP_202_ACCEPTED)
 
                 else:
-                    
+
                     """Return a response message that lets the user know the otp code validation failed"""
                     payload = error_response(
-                        status="failed",
-                        message="OTP code incorrect. Try again!"
+                        status="failed", message="OTP code incorrect. Try again!"
                     )
                     return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
             elif user.is_active == True and user.is_email_active == True:
-                
+
                 """Let the user know that he/she is verified already"""
                 payload = success_response(
-                    status="success",
-                    message="You are already verified!",
-                    data={}
+                    status="success", message="You are already verified!", data={}
                 )
                 return Response(data=payload, status=status.HTTP_200_OK)
-        
+
 
 class ResendOniichanOTP(views.APIView):
     serializer_class = ResendOTPSerializer
     permission_classes = [AllowAny]
-    
-    
-    def post(self, request:HttpRequest) -> Response:
+
+    def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
-        
+
         if serializer.is_valid():
-            
+
             """Get serialized data"""
             otp_data = serializer.data
 
             """Check to see if user user exits"""
             try:
-                user = User.objects.get(email=otp_data.get('email'))
+                user = User.objects.get(email=otp_data.get("email"))
             except User.DoesNotExist:
                 payload = error_response(
-                    status="failed",
-                    message="Credentials does not match our record!"
+                    status="failed", message="Credentials does not match our record!"
                 )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
             """Check if a user active and email active flag is True"""
             if user.is_active is True and user.is_email_active is True:
-                
+
                 payload = success_response(
-                    status="success",
-                    message="You are already verified!", statusdata={}
+                    status="success", message="You are already verified!", statusdata={}
                 )
-                return Response(data=payload,
-                                status=status.HTTP_200_OK)
+                return Response(data=payload, status=status.HTTP_200_OK)
 
             elif user.is_email_active is False:
 
@@ -227,30 +225,28 @@ class ResendOniichanOTP(views.APIView):
 
                 """Check if otp has been sent, then send a response message"""
                 if otp_sent:
-                    
+
                     payload = success_response(
                         status="success",
                         message="An OTP code has been sent to the provided email address.",
-                        data={}
+                        data={},
                     )
                     return Response(data=payload, status=status.HTTP_201_CREATED)
 
             else:
                 """Return a response message telling them to try again"""
                 payload = error_response(
-                    status="failed",
-                    message="Something went wrong! Please try again."
+                    status="failed", message="Something went wrong! Please try again."
                 )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-        
-    
+
 
 # class SuspendUserApiView(views.APIView):
 #     permissions_classes = [IsAuthenticated]
-    
+
 #     def get_single_user(self, email:str) -> Response:
-        
-#         try: 
+
+#         try:
 #             user = User.objects.get(is_active=True, email=email)
 #             return user
 #         except User.DoesNotExist:
@@ -259,11 +255,11 @@ class ResendOniichanOTP(views.APIView):
 #                 message="User does not exist!"
 #             )
 #             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-        
+
 #     def get(self, request:HttpRequest, email:str) -> Response:
 #         user = self.get_single_user(email=email)
 #         serializer = SuspendUserSerializer(user)
-        
+
 #         payload = success_response(
 #             status="success",
 #             message="User retrieved!",
@@ -274,31 +270,31 @@ class ResendOniichanOTP(views.APIView):
 #     def put(self, request:HttpRequest, email:str) -> Response:
 #         user = self.get_single_user(email=email)
 #         serializer = SuspendUserSerializer(data=request.data, instance=user)
-        
+
 #         # Serialized data from the serializer
 #         serialized_email = serializer.initial_data.get("email")
 #         serialized_active_flag = serializer.initial_data.get("is_staff")
-        
+
 #         # Logic to check if the user request has the following perms
 #         # -> is_staff, is_active, is_authenticated, has_checker_perm
 #         user_has_checker_perm = has_controller_perm_func(request.user)
-        
-#         # Check if the serializer is valid and 
+
+#         # Check if the serializer is valid and
 #         # the user making the request has controller permission
 #         if serializer.is_valid() == user_has_checker_perm is True:
-            
+
 #             # Checks if the serialized is_active flag is set to True and;
 #             # the serialized email is equal to the user email
 #             if serialized_active_flag is True and serialized_email is user.email:
-                
+
 #                 # Suspend the user
 #                 user.is_active = False
 #                 user.save()
 
 #                 # Custom payload
 #                 payload = success_response(
-#                     status="success", 
-#                     message="User successfully suspended!", 
+#                     status="success",
+#                     message="User successfully suspended!",
 #                     data=serializer.data
 #                 )
 #                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
@@ -306,11 +302,11 @@ class ResendOniichanOTP(views.APIView):
 #             # Checks if the serialized is_active flag is set to False and;
 #             # the serialized email is equal to the user email
 #             elif serialized_active_flag is False and serialized_email is user.email:
-                
+
 #                 # Activate the user
 #                 user.is_active = True
 #                 user.save()
-                
+
 #                 # Custom payload
 #                 payload = success_response(
 #                     status="success",
@@ -318,72 +314,75 @@ class ResendOniichanOTP(views.APIView):
 #                     data=serializer.data
 #                 )
 #                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
-        
+
 #             payload = error_response(
 #                 success="failed",
 #                 message="User does not have the required permission to perform this action!"
 #             )
 #             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-    
+
 #         payload = error_response(
 #             status="failed",
 #             message="Something went wrong. Please try again!"
 #         )
 #         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+
+
 class ChangeOniichanPassword(views.APIView):
     permissions_classes = [IsAuthenticated]
     serializer_class = ChangeUserPasswordSerializer
-    
-    def get_current_user(self, email:str) -> Response:
+
+    def get_current_user(self, email: str) -> Response:
         """
         It gets the current user.
-        
+
         :param email: The email of the user you want to get
         :type email: str
         :return: A user object
         """
-        
+
         try:
             user = User.objects.get(is_active=True, email=email)
             return user
         except User.DoesNotExist:
             payload = error_response(
-                status="404 not found",
-                message="Oniichan not found!"
+                status="404 not found", message="Oniichan not found!"
             )
             return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
-    
-    def put(self, request:HttpRequest, email:str) -> Response:
-        
+
+    def put(self, request: HttpRequest, email: str) -> Response:
+
         """Get current logged in user"""
         user = self.get_current_user(email=email)
         serializer = self.serializer_class(user, data=request.data)
-        
+
         if serializer.is_valid():
-            
+
             current_password = serializer.validated_data.get("current_password")
             new_password = serializer.validated_data.get("new_password")
             repeat_new_password = serializer.validated_data.get("repeat_new_password")
-            
+
             """
             If the user password equals the current password, 
             set the variable to True, else set it to False
             """
-            can_change_password = True if hashers.check_password(current_password, user.password)\
+            can_change_password = (
+                True
+                if hashers.check_password(current_password, user.password)
                 else False
-            
+            )
+
             """
             If the can change password variable is True, 
             and the new password requals the repeat new password, 
             set the password message to True else False
             """
-            password_message = True \
-                if can_change_password is True \
-                and new_password == repeat_new_password \
+            password_message = (
+                True
+                if can_change_password is True and new_password == repeat_new_password
                 else False
-            
+            )
+
             """
             Update current user password
             """
@@ -391,115 +390,104 @@ class ChangeOniichanPassword(views.APIView):
                 user.password = new_password
                 user.set_password(new_password)
                 user.save()
-                
+
                 payload = success_response(
-                    status="202 accepted",
-                    message="Oniichan password changed!",
-                    data={}
+                    status="202 accepted", message="Oniichan password changed!", data={}
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
 
             payload = error_response(
                 status="400 bad request",
-                message="Oniichan password incorrect. Please try again!"
+                message="Oniichan password incorrect. Please try again!",
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
-        payload = error_response(
-            status="400 bad request",
-            message=serializer.errors
-        )
+        payload = error_response(status="400 bad request", message=serializer.errors)
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-        
+
 
 class ResetOniichanPasswordOTPAPIView(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = ResetPasswordOTPSerializer
-    
-    def post(self, request:HttpRequest) -> Response:
+
+    def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
-        
+
         if serializer.is_valid():
-            
+
             """Get serialized data"""
             otp_data = serializer.data
-            
+
             """Send otp code to user's email address"""
-            otp_sent = otp_verify.send_password_reset_otp_code_to_email(email=otp_data.get("email"))
+            otp_sent = otp_verify.send_password_reset_otp_code_to_email(
+                email=otp_data.get("email")
+            )
 
             """Check if otp has been sent, then send a response message"""
             if otp_sent:
-                
+
                 payload = success_response(
                     status="success",
                     message="An OTP code has been sent to the provided email address.",
-                    data={}
+                    data={},
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
-            
+
         else:
-            
+
             """Else, return a response message telling them to try again"""
-            payload = error_response(
-                status="failed",
-               message=serializer.errors
-            )
+            payload = error_response(status="failed", message=serializer.errors)
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-        
+
 
 class ConfirmResetOniichanPasswordOTPAPIView(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = OTPSerializer
-    
-    def post(self, request:HttpRequest) -> Response:
+
+    def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
-        
+
         if serializer.is_valid():
-            
+
             """Get serialized data"""
             otp_data = serializer.data
-            
+
             """Validate otp code"""
             otp_valid = otp_verify.verify_otp_code_from_email(
-                otp_code=otp_data.get("otp_code"), 
-                email=otp_data.get("email")
+                otp_code=otp_data.get("otp_code"), email=otp_data.get("email")
             )
-            
+
             """Checks if otp valid comes out True"""
             if otp_valid is True:
-                
+
                 """Gets user email"""
                 user_email = otp_data.get("email")
-                
+
                 """Gets user"""
                 user = User.objects.get(email=user_email)
-                
+
                 """Context for html email"""
-                context = {
-                    "firstname": user.firstname
-                }
-                
+                context = {"firstname": user.firstname}
+
                 """Send Password Reset Success HTML Email to user"""
                 send_html_to_email(
-                    to_list=[user_email], subject="WELCOME BACK, {}".format(user.firstname),
-                    template_name="emails/users/welcome.html", 
+                    to_list=[user_email],
+                    subject="WELCOME BACK, {}".format(user.firstname),
+                    template_name="emails/users/welcome.html",
                     context=context,
                 )
 
                 """Return a response message that lets the user know the otp validation was successful"""
                 payload = success_response(
-                    status="success",
-                    message="OTP code has been verified!",
-                    data={}
+                    status="success", message="OTP code has been verified!", data={}
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
 
             else:
-                
+
                 """Return a response message that lets the know that the otp code validation failed"""
                 payload = error_response(
-                    status="failed",
-                    message="OTP code incorrect. Try again!"
+                    status="failed", message="OTP code incorrect. Try again!"
                 )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
@@ -507,61 +495,59 @@ class ConfirmResetOniichanPasswordOTPAPIView(views.APIView):
 class ResetOniichanPasswordOTPCompleteAPIView(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = CompleteResetPasswordOTPSerializer
-    
-    def post(self, request:HttpRequest) -> Response:
+
+    def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
-        
+
         if serializer.is_valid():
-            
+
             """Serialized data"""
             data = serializer.data
-            
+
             """Get email, password and confirm password"""
             email = data.get("email")
             password = data.get("password")
             confirm_password = data.get("confirm_password")
-            
+
             """Get user"""
             user = User.objects.get(email=email)
-            
+
             """Check if password and confirm_password is the same"""
-            password_message = True \
-                if password == confirm_password else False
-                
+            password_message = True if password == confirm_password else False
+
             """Check if password message is True, then set and hash user password"""
             if password_message is True:
                 user.password = password
                 user.set_password(password)
                 user.save()
-                
+
                 """Return a response message to the user saying password reset was successful"""
                 payload = success_response(
-                    status="202 accepted",
-                    message="Password reset successful!",
-                    data={}
+                    status="202 accepted", message="Password reset successful!", data={}
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
-            
+
             else:
-                
+
                 """Return a response message to the user saying password incorrect"""
                 payload = error_response(
                     status="400 bad request",
-                    message="Password incorrect. Plelase try again!"
+                    message="Password incorrect. Plelase try again!",
                 )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
         else:
-            
+
             """Return a response message to the user with the error message"""
             payload = error_response(
-                status="400 bad request",
-                message=serializer.errors
+                status="400 bad request", message=serializer.errors
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 @receiver(reset_password_token_created)
-def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+def password_reset_token_created(
+    sender, instance, reset_password_token, *args, **kwargs
+):
     """
     Handles password reset tokens
     When a token is created, an e-mail needs to be sent to the user
@@ -571,55 +557,52 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     :param args:
     :param kwargs:
     :return:
-    """ 
-    
+    """
+
     "Context to be applied on email"
-    token_redirect_url = instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm'))
+    token_redirect_url = instance.request.build_absolute_uri(
+        reverse("password_reset:reset-password-confirm")
+    )
     token_key = reset_password_token.key
 
     context = {
-        'user': reset_password_token.user,
-        'protocol': 'http',
-        'domain': '127.0.0.1:8000',
-        'email': reset_password_token.user.email,
-        'reset_password_url': "{}?token={}".format(
-            token_redirect_url,
-            token_key
-        )
+        "user": reset_password_token.user,
+        "protocol": "http",
+        "domain": "127.0.0.1:8000",
+        "email": reset_password_token.user.email,
+        "reset_password_url": "{}?token={}".format(token_redirect_url, token_key),
     }
 
     """Send html e-mail to the user"""
     send_html_to_email(
-        to_list=[reset_password_token.user.email], 
+        to_list=[reset_password_token.user.email],
         subject="Django Rest Auth - PASSWORD RESET",
-        template_name="emails/authentication/user_reset_password.html", 
+        template_name="emails/authentication/user_reset_password.html",
         context=context,
     )
-        
-        
+
+
 class LogOniichanOut(views.APIView):
     """
     Removes the authenticated user's ID from the request and flushes their
     session data.
     """
+
     response = Response()
-    
-    def post(self, request:HttpRequest) -> Response:
-        
+
+    def post(self, request: HttpRequest) -> Response:
+
         """Flush out user's session from the client side"""
         request.session.flush()
-        
+
         """Wipes user request"""
         logout(request)
-        
+
         payload = success_response(
-            status="204 no content",
-            message="Oniichan has been logged out!",
-            data={}
+            status="204 no content", message="Oniichan has been logged out!", data={}
         )
         return Response(data=payload, status=status.HTTP_204_NO_CONTENT)
-    
-    
+
 
 def email_otp_verify(request):
     return render(request, "emails/authentication/otp_verify.html")
