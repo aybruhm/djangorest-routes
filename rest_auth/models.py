@@ -25,7 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     def __str__(self):
-        return f"{self.firstname} {self.lastname}"
+        return self.email
 
     class Meta:
         verbose_name_plural = "Users"
