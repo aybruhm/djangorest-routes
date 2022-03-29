@@ -3,7 +3,7 @@ from pathlib import Path
 from setuptools import setup
  
 
-README=Path("README.rst").read_text(encoding="utf-8")
+README=Path("README.md").read_text(encoding="utf-8")
  
 # Allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
