@@ -212,7 +212,7 @@ class ResendOniichanOTP(views.APIView):
             if user.is_active is True and user.is_email_active is True:
 
                 payload = success_response(
-                    status="success", message="You are already verified!", statusdata={}
+                    status="success", message="You are already verified!", data={}
                 )
                 return Response(data=payload, status=status.HTTP_200_OK)
 
