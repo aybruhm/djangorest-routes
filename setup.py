@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from setuptools import setup
+from setuptools import setup, find_packages
  
 
 README=Path("README.md").read_text(encoding="utf-8")
@@ -11,12 +11,13 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 setup(
     name = 'djangorest_auth_as_service',
     version = '1.0',
-    packages = ['djangorest_auth_as_service'],
+    packages = find_packages(),
     include_package_data = True,
     license = 'MIT License',
     description = '🔐 Authentication routes as a service.',
     long_description = README,
     long_description_content_type='text/markdown',
+    keywords=['rest_auth', 'djangorest_auth', 'auth as a service', 'ar as a service'],
     url = 'https://github.com/israelabraham/djangorest-auth',
     author = 'Abram 🐼',
     author_email = 'israelvictory87@gmail.com',
