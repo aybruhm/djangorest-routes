@@ -48,23 +48,23 @@ Quick Start
 
 1. Install using `pip`:
 ```
-    pip install djangorest-auth
+    pip install djangorest-auth-as-service
 ```
 
 2. Add "djangorest_auth" to your INSTALLED_APPS setting like this:
 ```
     INSTALLED_APPS = [
         ...
-        'djangorest_auth',
+        'djangorest_auth_as_service',
     ]
 ```
 
 2. Include the polls URLconf in your project urls.py like this:
 ```
-    path('rest_auth/', include('djangorest_auth.urls')),
+    path('rest_auth/', include('djangorest_auth_as_service.urls')),
 ```
 
-4. Run ``python manage.py migrate`` to create the djangorest_auth models.
+4. Run ``python manage.py migrate`` to create the djangorest-auth-as-service models.
 
 5. Start the development server and visit http://127.0.0.1:8000/admin/
 
