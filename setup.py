@@ -50,6 +50,8 @@ setup(
         "djangorestframework-simplejwt",
         "django-rest-passwordreset",
         "rest-api-payload",
+        "django-cors-headers",
+        "django-hashid-field",
         "django-environ",
     ],
 )
