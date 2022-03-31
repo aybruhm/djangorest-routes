@@ -190,6 +190,23 @@ class ConfirmOniichanOTP(views.APIView):
 class ResendOniichanOTP(views.APIView):
     serializer_class = ResendOTPSerializer
     permission_classes = [AllowAny]
+    
+    def get_user(self, email:str):
+        """
+        Get a user by email
+        
+        :param email: The email of the user you want to get
+        :type email: str
+        :return: A user object
+        """
+        try:
+            user = User.objects.get(email=email)
+            return user
+        except User.DoesNotExist:
+            payload = error_response(
+                status="failed", message="Credentials does not match our record!"
+            )
+            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
@@ -199,17 +216,11 @@ class ResendOniichanOTP(views.APIView):
             """Get serialized data"""
             otp_data = serializer.data
 
-            """Check to see if user user exits"""
-            try:
-                user = User.objects.get(email=otp_data.get("email"))
-            except User.DoesNotExist:
-                payload = error_response(
-                    status="failed", message="Credentials does not match our record!"
-                )
-                return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+            """Get user"""
+            user = self.get_user(email=otp_data.get("email"))
 
             """Check if a user active and email active flag is True"""
-            if user.is_active is True and user.is_email_active is True:
+            if user.is_active == True and user.is_email_active == True:
 
                 payload = success_response(
                     status="success", message="You are already verified!", data={}

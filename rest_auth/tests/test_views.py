@@ -36,17 +36,16 @@ class AuthOniichanTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
     
-    def test_resend_oniichan_otp_post(self):
-        
-        data = {"email": "abram@test.com"}
-        response = self.client.post("http://127.0.0.1:8000/rest_auth/resend_otp_code/", data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    # def test_resend_oniichan_otp(self):
+    #     data = {"email": "israelvictory87@gmail.com"}
+    #     response = self.client.post("http://127.0.0.1:8000/rest_auth/resend_otp_code/", data=data)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
         
     def test_resend_oniichan_otp_bad_request(self):
         data = {"email": "abram@hello.com"}
         response = self.client.post("http://127.0.0.1:8000/rest_auth/resend_otp_code/", data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        
+        self.assertEqual(response.data, {"status": "failed", "message": "Credentials does not match our record!"})        
         
     def test_confirm_otp_bad_request(self):
         data = {"email": "abram@test.com", "otp_code": "453521"}
