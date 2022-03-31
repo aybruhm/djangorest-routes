@@ -5,13 +5,13 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
-description::long description
+An authentication library strongly built in Python (Django and Django Rest Framework). It serves the purpose of quick bootstrapping a project's authentication infrastructure.
 
 
 
 Abstract
 -----------
-description::short description
+A reliable and trustworthy authentication library made for anyone who's a tinkerer and wants to get their personal or professional project authentication infrastructure built in no time.
 
 
 ![routes](https://user-images.githubusercontent.com/55067204/160565837-3f022306-f1f5-4de4-b7c2-430679f209e1.png)
@@ -19,6 +19,8 @@ description::short description
 
 Routes
 ---------
+Here are it's key features:
+
 - register
 - login (jwt)
 - login (refresh jwt)
@@ -31,7 +33,7 @@ Routes
 - reset password otp (otp)
 - reset password otp confirm (otp)
 - reset password otp complete (otp)
-- suspend user
+- suspend user (not completed)
 
 
 Requirements
@@ -80,3 +82,14 @@ You may also want to follow the author on [twitter](https://twitter.com/israelab
 License
 ---------
 Disclaimer: Everything you see here is open and free to use as long as you comply with the [license](https://github.com/israelabraham/djangorest-auth/blob/main/LICENSE.txt). There are no hidden charges. We promise to do our best to fix bugs and improve the code.
+
+
+Gratitude
+----------
+Special thanks goes to the beautiful brains of the below listed packages. From your works, I tinkered and came up with something that works best for me! I'll forever be grateful!
+
+- [django](https://github.com/django/django)
+- [djangorestframework](https://github.com/encode/django-rest-framework)
+- [djangorestframework-simplejwt](https://github.com/jazzband/djangorestframework-simplejwt)
+- [django-rest-passwordreset](https://github.com/anexia-it/django-rest-passwordreset)
+- [rest-api-payload](https://github.com/israelabraham/api-payload)
