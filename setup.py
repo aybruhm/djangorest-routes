@@ -9,9 +9,9 @@ README=Path("README.md").read_text(encoding="utf-8")
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
  
 setup(
-    name = 'djangorest_auth',
+    name = 'djangorest_auth_as_service',
     version = '1.0',
-    packages = ['djangorest_auth'],
+    packages = ['djangorest_auth_as_service'],
     include_package_data = True,
     license = 'MIT License',
     description = '🔐 Authentication routes as a service.',
