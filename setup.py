@@ -14,7 +14,7 @@ setup(
     packages = ['djangorest_auth'],
     include_package_data = True,
     license = 'MIT License',
-    description = 'Bootstrap your spa startup with this amazing django rest authentication reusable app',
+    description = '🔐 Authentication routes as a service.',
     long_description = README,
     long_description_content_type='text/markdown',
     url = 'https://github.com/israelabraham/djangorest-auth',
@@ -45,7 +45,7 @@ setup(
     ],
     python_requires=">=3.6",
     install_requires=[
-        "django",
+        "django>=2.2",
         "djangorestframework",
         "djangorestframework-simplejwt",
         "django-rest-passwordreset",
