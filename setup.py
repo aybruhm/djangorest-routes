@@ -9,16 +9,16 @@ README=Path("README.md").read_text(encoding="utf-8")
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
  
 setup(
-    name = 'djangorest_auth_as_service',
-    version = '1.1',
+    name = 'djangorest_routes',
+    version = '1.0',
     packages = find_packages(),
     include_package_data = True,
     license = 'MIT License',
     description = '🔐 Authentication routes as a service.',
     long_description = README,
     long_description_content_type='text/markdown',
-    keywords=['rest_auth', 'djangorest_auth', 'auth as a service', 'ar as a service'],
-    url = 'https://github.com/israelabraham/djangorest-auth-as-a-service',
+    keywords=['rest_auth', 'rest_routes', 'djangorest_auth', 'auth as a service', 'ar as a service'],
+    url = 'https://github.com/israelabraham/djangorest-routes',
     author = 'Abram 🐼',
     author_email = 'israelvictory87@gmail.com',
     classifiers =[
