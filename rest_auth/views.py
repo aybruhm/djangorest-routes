@@ -571,9 +571,7 @@ def password_reset_token_created(
     """
 
     "Context to be applied on email"
-    token_redirect_url = instance.request.build_absolute_uri(
-        reverse("password_reset:reset-password-confirm")
-    )
+    token_redirect_url = "/rest_auth/password_reset/confirm/"
     token_key = reset_password_token.key
 
     context = {
