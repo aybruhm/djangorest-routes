@@ -2,7 +2,9 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from hashid_field import HashidField
 from rest_auth.managers import UserManager
-from djangorest_auth.config.local import HASH_FIELD_SALT
+
+
+HASH_FIELD_SALT = "xj-mnplwwfxqg%3deo&worodl4h2$z5izs!(lxh*&bp%ch_"
 
 
 class User(AbstractBaseUser, PermissionsMixin):
