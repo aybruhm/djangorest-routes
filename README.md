@@ -13,8 +13,7 @@ Abstract
 -----------
 A reliable and trustworthy authentication library made for anyone who's a tinkerer and wants to get their personal or professional project authentication infrastructure built in no time.
 
-
-![routes](https://user-images.githubusercontent.com/55067204/160565837-3f022306-f1f5-4de4-b7c2-430679f209e1.png)
+![djangorest-routes](https://user-images.githubusercontent.com/55067204/161224355-7a6c59cc-9d14-4a9c-a861-19f2e7682688.png)
 
 
 Routes
@@ -28,8 +27,6 @@ Here are it's key features:
 - resend otp code
 - logout
 - change password
-- reset password (token)
-- reset password confirm (token)
 - reset password otp (otp)
 - reset password otp confirm (otp)
 - reset password otp complete (otp)
@@ -51,7 +48,7 @@ Quick Start
     pip install djangorest-routes
 ```
 
-2. Add "djangorest_routes" to your INSTALLED_APPS setting like this:
+2. Add "djangorest_routes" to your INSTALLED_APPS setting:
 ```
     INSTALLED_APPS = [
         ...
@@ -59,16 +56,21 @@ Quick Start
     ]
 ```
 
-2. Include the polls URLconf in your project urls.py like this:
+3. Set "rest_routes.User" to AUTH_USER_MODEL setting:
+```
+AUTH_USER_MODEL = "rest_routes.User"
+```
+
+4. Include the polls URLconf in your project urls.py:
 ```
     path('rest_routes/', include('rest_routes.urls')),
 ```
 
-4. Run ``python manage.py migrate`` to create the djangorest-auth-as-service models.
+5. Run ``python manage.py migrate`` to create the `djangorest_routes` models.
 
-5. Start the development server and visit http://127.0.0.1:8000/admin/
+6. Start the development server and visit http://127.0.0.1:8000/admin/
 
-6. Visit http://127.0.0.1:8000/rest_routes/ to test the authentication logics.
+7. Visit http://127.0.0.1:8000/rest_routes/ to test the authentication logics.
 
 
 Documentation & Support
