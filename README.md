@@ -91,5 +91,4 @@ Special thanks goes to the beautiful brains of the below listed packages. From y
 - [django](https://github.com/django/django)
 - [djangorestframework](https://github.com/encode/django-rest-framework)
 - [djangorestframework-simplejwt](https://github.com/jazzband/djangorestframework-simplejwt)
-- [django-rest-passwordreset](https://github.com/anexia-it/django-rest-passwordreset)
 - [rest-api-payload](https://github.com/israelabraham/api-payload)
