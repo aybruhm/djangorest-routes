@@ -1,5 +1,5 @@
 from rest_framework.test import APITestCase
-from rest_auth.models import User
+from rest_routes.models import User
 
 
 

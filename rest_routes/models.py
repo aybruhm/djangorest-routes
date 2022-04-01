@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from hashid_field import HashidField
-from rest_auth.managers import UserManager
+from rest_routes.managers import UserManager
 
 
 HASH_FIELD_SALT = "xj-mnplwwfxqg%3deo&worodl4h2$z5izs!(lxh*&bp%ch_"

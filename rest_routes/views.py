@@ -15,8 +15,8 @@ from rest_api_payload import success_response, error_response
 
 
 """Custom app -> Rest Auth Imports"""
-from rest_auth.utils import send_html_to_email
-from rest_auth.serializers import (
+from rest_routes.utils import send_html_to_email
+from rest_routes.serializers import (
     CompleteResetPasswordOTPSerializer,
     RegisterUserSerializer,
     ChangeUserPasswordSerializer,
@@ -27,7 +27,7 @@ from rest_auth.serializers import (
     UserSerializer,
     UserLoginObtainPairSerializer,
 )
-from rest_auth.otp_verifications import OTPVerification
+from rest_routes.otp_verifications import OTPVerification
 
 
 """Django Imports"""
@@ -55,22 +55,22 @@ class Konnichiwa(views.APIView):
         welcome_data = {
             "yosh!": "If you made it here, I'm proud of you!",
             "routes": {
-                "register": BASE_URL + "rest_auth/register/",
-                "login (jwt)": BASE_URL + "rest_auth/login/token/",
-                "login (refresh jwt)": BASE_URL + "rest_auth/login/refresh/",
-                "confirm_otp": BASE_URL + "rest_auth/confirm_otp/",
-                "resend_otp_code": BASE_URL + "rest_auth/resend_otp_code/",
-                "logout": BASE_URL + "rest_auth/logout/",
-                "change_password": BASE_URL + "rest_auth/change_password/<str:email>/",
-                "reset_password (token)": BASE_URL + "rest_auth/password_reset/",
+                "register": BASE_URL + "rest_routes/register/",
+                "login (jwt)": BASE_URL + "rest_routes/login/token/",
+                "login (refresh jwt)": BASE_URL + "rest_routes/login/refresh/",
+                "confirm_otp": BASE_URL + "rest_routes/confirm_otp/",
+                "resend_otp_code": BASE_URL + "rest_routes/resend_otp_code/",
+                "logout": BASE_URL + "rest_routes/logout/",
+                "change_password": BASE_URL + "rest_routes/change_password/<str:email>/",
+                "reset_password (token)": BASE_URL + "rest_routes/password_reset/",
                 "reset_password_confirm (token)": BASE_URL
-                + "rest_auth/password_reset/confirm/",
-                "reset_password_otp (otp)": BASE_URL + "rest_auth/password_reset_otp/",
+                + "rest_routes/password_reset/confirm/",
+                "reset_password_otp (otp)": BASE_URL + "rest_routes/password_reset_otp/",
                 "reset_password_otp_confirm (otp)": BASE_URL
-                + "rest_auth/password_reset_otp/confirm/",
+                + "rest_routes/password_reset_otp/confirm/",
                 "reset_password_otp_complete (otp)": BASE_URL
-                + "rest_auth/password_reset_otp/complete/",
-                "suspend_user": BASE_URL + "rest_auth/suspend_user/<str:email>/",
+                + "rest_routes/password_reset_otp/complete/",
+                "suspend_user": BASE_URL + "rest_routes/suspend_user/<str:email>/",
             },
         }
         return Response(data=welcome_data, status=status.HTTP_200_OK)
@@ -571,7 +571,7 @@ def password_reset_token_created(
     """
 
     "Context to be applied on email"
-    token_redirect_url = "/rest_auth/password_reset/confirm/"
+    token_redirect_url = "/rest_routes/password_reset/confirm/"
     token_key = reset_password_token.key
 
     context = {

@@ -2,7 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from djangorest_auth.config.base import RUNTIME_ENVIRON
+from djangorest_routes.config.base import RUNTIME_ENVIRON
 
 
 def main():

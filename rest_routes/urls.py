@@ -1,4 +1,4 @@
-from rest_auth.views import (
+from rest_routes.views import (
     RegisterOniichan,
     ConfirmOniichanOTP,
     ResendOniichanOTP,

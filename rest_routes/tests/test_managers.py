@@ -1,5 +1,5 @@
 from unittest import mock
-from rest_auth import managers, models
+from rest_routes import managers, models
 from rest_framework.test import APITestCase
 
 

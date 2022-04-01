@@ -12,7 +12,7 @@ from rest_api_payload import success_response
 
 
 """Custom app -> Rest Auth Imports"""
-from rest_auth.otp_verifications import OTPVerification
+from rest_routes.otp_verifications import OTPVerification
 
 
 """Class Instantiations"""

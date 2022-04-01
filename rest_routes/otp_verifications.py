@@ -1,7 +1,7 @@
 from random import choices
 from django.contrib.auth import get_user_model
 
-from rest_auth.utils import send_html_to_email
+from rest_routes.utils import send_html_to_email
 
 
 User = get_user_model()

@@ -51,17 +51,17 @@ Quick Start
     pip install djangorest-routes
 ```
 
-2. Add "djangorest_auth" to your INSTALLED_APPS setting like this:
+2. Add "djangorest_routes" to your INSTALLED_APPS setting like this:
 ```
     INSTALLED_APPS = [
         ...
-        'djangorest_routes',
+        'rest_routes',
     ]
 ```
 
 2. Include the polls URLconf in your project urls.py like this:
 ```
-    path('rest_routes/', include('djangorest_routes.urls')),
+    path('rest_routes/', include('rest_routes.urls')),
 ```
 
 4. Run ``python manage.py migrate`` to create the djangorest-auth-as-service models.

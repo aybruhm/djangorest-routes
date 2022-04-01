@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import hashid_field.field
-import rest_auth.managers
+import rest_routes.managers
 
 
 class Migration(migrations.Migration):
@@ -89,7 +89,7 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "Users",
             },
             managers=[
-                ("objects", rest_auth.managers.UserManager()),
+                ("objects", rest_routes.managers.UserManager()),
             ],
         ),
     ]
