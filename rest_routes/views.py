@@ -10,7 +10,6 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
 
 """Third Party Imports"""
-from django_rest_passwordreset.signals import reset_password_token_created  # noqa
 from rest_api_payload import success_response, error_response
 
 
@@ -31,11 +30,9 @@ from rest_routes.otp_verifications import OTPVerification
 
 
 """Django Imports"""
-from django.dispatch import receiver
 from django.http import HttpRequest
 from django.contrib.auth import get_user_model, logout, hashers
 from django.shortcuts import render
-from django.urls import reverse
 
 
 """Class Instantiations"""
@@ -62,14 +59,9 @@ class Konnichiwa(views.APIView):
                 "resend_otp_code": BASE_URL + "rest_routes/resend_otp_code/",
                 "logout": BASE_URL + "rest_routes/logout/",
                 "change_password": BASE_URL + "rest_routes/change_password/<str:email>/",
-                "reset_password (token)": BASE_URL + "rest_routes/password_reset/",
-                "reset_password_confirm (token)": BASE_URL
-                + "rest_routes/password_reset/confirm/",
                 "reset_password_otp (otp)": BASE_URL + "rest_routes/password_reset_otp/",
-                "reset_password_otp_confirm (otp)": BASE_URL
-                + "rest_routes/password_reset_otp/confirm/",
-                "reset_password_otp_complete (otp)": BASE_URL
-                + "rest_routes/password_reset_otp/complete/",
+                "reset_password_otp_confirm (otp)": BASE_URL + "rest_routes/password_reset_otp/confirm/",
+                "reset_password_otp_complete (otp)": BASE_URL + "rest_routes/password_reset_otp/complete/",
                 "suspend_user": BASE_URL + "rest_routes/suspend_user/<str:email>/",
             },
         }
@@ -553,42 +545,6 @@ class ResetOniichanPasswordOTPCompleteAPIView(views.APIView):
                 status="400 bad request", message=serializer.errors
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-
-
-@receiver(reset_password_token_created)
-def password_reset_token_created(
-    sender, instance, reset_password_token, *args, **kwargs
-):
-    """
-    Handles password reset tokens
-    When a token is created, an e-mail needs to be sent to the user
-    :param sender: View Class that sent the signal
-    :param instance: View Instance that sent the signal
-    :param reset_password_token: Token Model Object
-    :param args:
-    :param kwargs:
-    :return:
-    """
-
-    "Context to be applied on email"
-    token_redirect_url = "/rest_routes/password_reset/confirm/"
-    token_key = reset_password_token.key
-
-    context = {
-        "user": reset_password_token.user,
-        "protocol": "http",
-        "domain": "127.0.0.1:8000",
-        "email": reset_password_token.user.email,
-        "reset_password_url": "{}?token={}".format(token_redirect_url, token_key),
-    }
-
-    """Send html e-mail to the user"""
-    send_html_to_email(
-        to_list=[reset_password_token.user.email],
-        subject="Django Rest Auth - PASSWORD RESET",
-        template_name="emails/authentication/user_reset_password.html",
-        context=context,
-    )
 
 
 class LogOniichanOut(views.APIView):

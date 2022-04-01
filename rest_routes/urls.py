@@ -13,7 +13,7 @@ from rest_routes.views import (
     ResetOniichanPasswordOTPCompleteAPIView,
     welcome_user,
 )
-from django.urls import path, include
+from django.urls import path
 
 app_name = "authentication"
 
@@ -44,11 +44,6 @@ urlpatterns = [
         "change_password/<str:email>/",
         ChangeOniichanPassword.as_view(),
         name="change_user_password",
-    ),
-        # Password Reset URLs
-    path(
-        "password_reset/",
-        include("django_rest_passwordreset.urls", namespace="password_reset"),
     ),
     path("logout/", LogOniichanOut.as_view(), name="logout_user"),
     # Email
