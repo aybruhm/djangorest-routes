@@ -10,14 +10,14 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
  
 setup(
     name = 'djangorest_routes',
-    version = '1.1',
+    version = '1.2',
     packages = find_packages(),
     include_package_data = True,
     license = 'MIT License',
     description = '🔐 Authentication routes as a service.',
     long_description = README,
     long_description_content_type='text/markdown',
-    keywords=['rest_auth', 'rest_routes', 'djangorest_routes', 'auth as a service', 'ar as a service'],
+    keywords=['rest_routes', 'rest_routes', 'djangorest_routes', 'auth as a service', 'ar as a service'],
     url = 'https://github.com/israelabraham/djangorest-routes',
     author = 'Abram 🐼',
     author_email = 'israelvictory87@gmail.com',
