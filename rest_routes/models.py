@@ -17,7 +17,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(db_index=True, unique=True)
     otp_code = HashidField(
         salt=settings.SALT_KEY if settings.SALT_KEY else HASH_FIELD_SALT, 
-        min_length=6, unique=True, blank=True, null=True
+        min_length=settings.OTP_LENGTH if settings.OTP_LENGTH else 6, 
+        unique=True, blank=True, null=True
     )
     is_active = models.BooleanField(default=True)
     is_email_active = models.BooleanField(default=False)
