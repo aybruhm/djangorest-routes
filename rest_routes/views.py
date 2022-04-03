@@ -1,6 +1,3 @@
-"""Python Imports"""
-
-
 """Rest Framework Imports"""
 from rest_framework import status, views
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -22,8 +19,6 @@ from rest_routes.serializers import (
     OTPSerializer,
     ResendOTPSerializer,
     ResetPasswordOTPSerializer,
-    SuspendUserSerializer,
-    UserSerializer,
     UserLoginObtainPairSerializer,
 )
 from rest_routes.otp_verifications import OTPVerification
@@ -86,13 +81,13 @@ class RegisterOniichan(views.APIView):
             serializer.save()
 
             payload = success_response(
-                status="201 created",
-                message="Oniichan, an OTP code has been sent to your email address!",
+                status="success",
+                message="An OTP code has been sent to your email address!",
                 data=serializer.data,
             )
             return Response(data=payload, status=status.HTTP_200_OK)
 
-        payload = error_response(status="400 bad request", message=serializer.errors)
+        payload = error_response(status="failed", message=serializer.errors)
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -124,10 +119,9 @@ class ConfirmOniichanOTP(views.APIView):
             try:
                 user = User.objects.get(email=otp_data.get("email"))
             except User.DoesNotExist:
-                payload = {
-                    "status": "failed",
-                    "message": "Credentials does not match our record!",
-                }
+                payload = error_response(
+                    status="failed", message="Credentials does not match our record!"
+                )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
             """Check if user email active flag is False"""
@@ -156,10 +150,9 @@ class ConfirmOniichanOTP(views.APIView):
                     )
 
                     """Return a response message that lets the user know the otp code has been verified"""
-                    payload = {
-                        "status": "success",
-                        "message": "OTP code has been verified!",
-                    }
+                    payload = success_response(
+                        status="success", message="OTP code has been verified!", data={}
+                    )
                     return Response(data=payload, status=status.HTTP_202_ACCEPTED)
 
                 else:
@@ -335,7 +328,7 @@ class ChangeOniichanPassword(views.APIView):
     permissions_classes = [IsAuthenticated]
     serializer_class = ChangeUserPasswordSerializer
 
-    def get_current_user(self, email: str) -> Response:
+    def get_current_user(self, email: str):
         """
         It gets the current user.
 
@@ -349,7 +342,7 @@ class ChangeOniichanPassword(views.APIView):
             return user
         except User.DoesNotExist:
             payload = error_response(
-                status="404 not found", message="Oniichan not found!"
+                status="failed", message="Credentials does not match our record!"
             )
             return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
 
@@ -395,17 +388,17 @@ class ChangeOniichanPassword(views.APIView):
                 user.save()
 
                 payload = success_response(
-                    status="202 accepted", message="Oniichan password changed!", data={}
+                    status="success", message="Password changed!", data={}
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
 
             payload = error_response(
-                status="400 bad request",
-                message="Oniichan password incorrect. Please try again!",
+                status="failed",
+                message="Password incorrect. Please try again!",
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
-        payload = error_response(status="400 bad request", message=serializer.errors)
+        payload = error_response(status="failed", message=serializer.errors)
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -526,7 +519,7 @@ class ResetOniichanPasswordOTPCompleteAPIView(views.APIView):
 
                 """Return a response message to the user saying password reset was successful"""
                 payload = success_response(
-                    status="202 accepted", message="Password reset successful!", data={}
+                    status="success", message="Password reset successful!", data={}
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
 
@@ -534,15 +527,16 @@ class ResetOniichanPasswordOTPCompleteAPIView(views.APIView):
 
                 """Return a response message to the user saying password incorrect"""
                 payload = error_response(
-                    status="400 bad request",
+                    status="failed",
                     message="Password incorrect. Plelase try again!",
                 )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+        
         else:
 
             """Return a response message to the user with the error message"""
             payload = error_response(
-                status="400 bad request", message=serializer.errors
+                status="failed", message=serializer.errors
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
@@ -564,7 +558,7 @@ class LogOniichanOut(views.APIView):
         logout(request)
 
         payload = success_response(
-            status="204 no content", message="Oniichan has been logged out!", data={}
+            status="success", message="You logged out!", data={}
         )
         return Response(data=payload, status=status.HTTP_204_NO_CONTENT)
 
