@@ -61,16 +61,26 @@ Quick Start
 AUTH_USER_MODEL = "rest_routes.User"
 ```
 
-4. Include the polls URLconf in your project urls.py:
+4. Set the length of the OTP code in your project settings, default is `6`:
+```
+OTP_LENGTH = 8
+```
+
+5. Include the OTP salt key in your project settings, do not expose this salt key:
+```
+SALT_KEY = "some-secured-salt-key-for-otp-hashing"
+```
+
+6. Include the polls URLconf in your project urls.py:
 ```
     path('rest_routes/', include('rest_routes.urls')),
 ```
 
-5. Run ``python manage.py migrate`` to create the `djangorest_routes` models.
+7. Run ``python manage.py migrate`` to create the `djangorest_routes` models.
 
-6. Start the development server and visit http://127.0.0.1:8000/admin/
+8. Start the development server and visit http://127.0.0.1:8000/admin/
 
-7. Visit http://127.0.0.1:8000/rest_routes/ to test the authentication logics.
+9. Visit http://127.0.0.1:8000/rest_routes/ to test the authentication logics.
 
 
 Documentation & Support
