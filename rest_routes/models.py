@@ -2,8 +2,9 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from hashid_field import HashidField
 from rest_routes.managers import UserManager
+from django.conf import settings
 
-
+# SALT KEY: Do not use in production
 HASH_FIELD_SALT = "xj-mnplwwfxqg%3deo&worodl4h2$z5izs!(lxh*&bp%ch_"
 
 
@@ -15,7 +16,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=11, unique=True, default=0)
     email = models.EmailField(db_index=True, unique=True)
     otp_code = HashidField(
-        salt=HASH_FIELD_SALT, min_length=6, unique=True, blank=True, null=True
+        salt=settings.SALT_KEY if settings.SALT_KEY else HASH_FIELD_SALT, 
+        min_length=6, unique=True, blank=True, null=True
     )
     is_active = models.BooleanField(default=True)
     is_email_active = models.BooleanField(default=False)
