@@ -78,9 +78,7 @@ SALT_KEY = "some-secured-salt-key-for-otp-hashing"
 
 7. Run ``python manage.py migrate`` to create the `djangorest_routes` models.
 
-8. Start the development server and visit http://127.0.0.1:8000/admin/
-
-9. Visit http://127.0.0.1:8000/rest_routes/ to test the authentication logics.
+8. Start the development server and visit http://127.0.0.1:8000/rest_routes/
 
 
 Documentation & Support
