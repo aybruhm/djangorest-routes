@@ -14,3 +14,10 @@ Change Log
 - Update documentation
 - Bump version to 1.2
 - Fix ModuleNotFound error
+
+1.2.2 (03/04/2022)
+- Bump version to 1.2.2
+- Add User model to admin
+- Include SALT_KEY for OTP hashing
+- Update documentation
+- Change response (success and error) messages
