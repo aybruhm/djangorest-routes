@@ -184,5 +184,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # Custom Authentication User Model Definition
-
 AUTH_USER_MODEL = "rest_routes.User"
+
+# Rest Routes Configuration
+OTP_LENGTH = 6
