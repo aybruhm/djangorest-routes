@@ -3,6 +3,7 @@
 
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![PyPI version](https://badge.fury.io/py/djangorest-routes.svg)](https://badge.fury.io/py/djangorest-routes)
 
 
 An authentication library strongly built in Python (Django and Django Rest Framework). It serves the purpose of quick bootstrapping a project's authentication infrastructure.
