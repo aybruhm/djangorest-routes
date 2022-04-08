@@ -72,7 +72,7 @@ OTP_LENGTH = 8
 SALT_KEY = "some-secured-salt-key-for-otp-hashing"
 ```
 
-6. Include the polls URLconf in your project urls.py:
+6. Include the rest_routes URLs in your project urls.py:
 ```
     path('rest_routes/', include('rest_routes.urls')),
 ```
@@ -85,7 +85,7 @@ SALT_KEY = "some-secured-salt-key-for-otp-hashing"
 Documentation & Support
 --------------------------
 
-Full documentation for the project is available at [docs](https://djangorest-auth.digitalstade.com/).
+Full documentation for the project is available at [docs](https://djangorest-routes.digitalstade.com/).
 
 You may also want to follow the author on [twitter](https://twitter.com/israelabraham_).
 
