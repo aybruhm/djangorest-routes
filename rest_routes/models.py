@@ -37,5 +37,5 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name_plural = "Users"
         permissions = [
-            "can_suspend_user", "Can suspend user"
+            ("can_suspend_user", "Can suspend user"),
         ]
