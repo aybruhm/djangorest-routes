@@ -35,10 +35,10 @@ environ.Env.read_env(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = env("SECRET_KEY", default="xj-mnplwwfxqg%3deo&worodzs!(lxh*&bp%ch_")
 
 # SALT WARNING: keep the salt key used in production secret!
-SALT_KEY = env("SALT_KEY")
+SALT_KEY = env("SALT_KEY", default="xj-mnplwwfxqg%3deo&worodl4h2$z5izs!(lxh*&bp%ch_")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = None
