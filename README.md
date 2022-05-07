@@ -31,7 +31,7 @@ Here are it's key features:
 - reset password otp (otp)
 - reset password otp confirm (otp)
 - reset password otp complete (otp)
-- suspend user (not completed)
+- suspend user (in progress)
 
 
 Requirements
