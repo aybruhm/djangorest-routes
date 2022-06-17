@@ -35,7 +35,7 @@ otp_verify = OTPVerification()
 User = get_user_model()
 
 
-class Konnichiwa(views.APIView):
+class Hello(views.APIView):
 
     PROTOCOL = "http://"
 
@@ -53,17 +53,21 @@ class Konnichiwa(views.APIView):
                 "confirm_otp": BASE_URL + "rest_routes/confirm_otp/",
                 "resend_otp_code": BASE_URL + "rest_routes/resend_otp_code/",
                 "logout": BASE_URL + "rest_routes/logout/",
-                "change_password": BASE_URL + "rest_routes/change_password/<str:email>/",
-                "reset_password_otp (otp)": BASE_URL + "rest_routes/password_reset_otp/",
-                "reset_password_otp_confirm (otp)": BASE_URL + "rest_routes/password_reset_otp/confirm/",
-                "reset_password_otp_complete (otp)": BASE_URL + "rest_routes/password_reset_otp/complete/",
+                "change_password": BASE_URL
+                + "rest_routes/change_password/<str:email>/",
+                "reset_password_otp (otp)": BASE_URL
+                + "rest_routes/password_reset_otp/",
+                "reset_password_otp_confirm (otp)": BASE_URL
+                + "rest_routes/password_reset_otp/confirm/",
+                "reset_password_otp_complete (otp)": BASE_URL
+                + "rest_routes/password_reset_otp/complete/",
                 "suspend_user": BASE_URL + "rest_routes/suspend_user/<str:email>/",
             },
         }
         return Response(data=welcome_data, status=status.HTTP_200_OK)
 
 
-class RegisterOniichan(views.APIView):
+class RegisterUser(views.APIView):
     serializer_class = RegisterUserSerializer
     permission_classes = [AllowAny]
 
@@ -91,19 +95,19 @@ class RegisterOniichan(views.APIView):
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LoginOniichan(TokenObtainPairView):
+class LoginUser(TokenObtainPairView):
     """Inherits TokenObtainPairView from rest_framework simplejwt"""
 
     serializer_class = UserLoginObtainPairSerializer
 
 
-class RefreshLoginOniichan(TokenRefreshView):
+class RefreshLoginUser(TokenRefreshView):
     """Inherits TokenRefreshView from rest_framework simplejwt"""
 
     serializer_class = TokenRefreshSerializer
 
 
-class ConfirmOniichanOTP(views.APIView):
+class ConfirmUserOTP(views.APIView):
     serializer_class = OTPSerializer
     permission_classes = [AllowAny]
 
@@ -172,14 +176,14 @@ class ConfirmOniichanOTP(views.APIView):
                 return Response(data=payload, status=status.HTTP_200_OK)
 
 
-class ResendOniichanOTP(views.APIView):
+class ResendUserOTP(views.APIView):
     serializer_class = ResendOTPSerializer
     permission_classes = [AllowAny]
-    
-    def get_user(self, email:str):
+
+    def get_user(self, email: str):
         """
         Get a user by email
-        
+
         :param email: The email of the user you want to get
         :type email: str
         :return: A user object
@@ -324,7 +328,7 @@ class ResendOniichanOTP(views.APIView):
 #         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ChangeOniichanPassword(views.APIView):
+class ChangeUserPassword(views.APIView):
     permissions_classes = [IsAuthenticated]
     serializer_class = ChangeUserPasswordSerializer
 
@@ -402,7 +406,7 @@ class ChangeOniichanPassword(views.APIView):
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ResetOniichanPasswordOTPAPIView(views.APIView):
+class ResetUserPasswordOTPAPIView(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = ResetPasswordOTPSerializer
 
@@ -436,7 +440,7 @@ class ResetOniichanPasswordOTPAPIView(views.APIView):
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ConfirmResetOniichanPasswordOTPAPIView(views.APIView):
+class ConfirmResetUserPasswordOTPAPIView(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = OTPSerializer
 
@@ -488,7 +492,7 @@ class ConfirmResetOniichanPasswordOTPAPIView(views.APIView):
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ResetOniichanPasswordOTPCompleteAPIView(views.APIView):
+class ResetUserPasswordOTPCompleteAPIView(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = CompleteResetPasswordOTPSerializer
 
@@ -531,17 +535,15 @@ class ResetOniichanPasswordOTPCompleteAPIView(views.APIView):
                     message="Password incorrect. Plelase try again!",
                 )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-        
+
         else:
 
             """Return a response message to the user with the error message"""
-            payload = error_response(
-                status="failed", message=serializer.errors
-            )
+            payload = error_response(status="failed", message=serializer.errors)
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LogOniichanOut(views.APIView):
+class LogUserOut(views.APIView):
     """
     Removes the authenticated user's ID from the request and flushes their
     session data.
@@ -557,9 +559,7 @@ class LogOniichanOut(views.APIView):
         """Wipes user request"""
         logout(request)
 
-        payload = success_response(
-            status="success", message="You logged out!", data={}
-        )
+        payload = success_response(status="success", message="You logged out!", data={})
         return Response(data=payload, status=status.HTTP_204_NO_CONTENT)
 
 
