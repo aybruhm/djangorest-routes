@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 RUNTIME_ENVIRON = "djangorest_routes.config.local"  # when serving to production, change to '.production'
 
 # Take environment variables from .env file
-environ.Env.read_env(BASE_DIR / ".env")
+environ.Env.read_env(".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -41,7 +41,7 @@ SECRET_KEY = env("SECRET_KEY", default="xj-mnplwwfxqg%3deo&worodzs!(lxh*&bp%ch_"
 SALT_KEY = env("SALT_KEY", default="xj-mnplwwfxqg%3deo&worodl4h2$z5izs!(lxh*&bp%ch_")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = None
+DEBUG = env("DEBUG", default=True)
 
 ALLOWED_HOSTS = []
 
