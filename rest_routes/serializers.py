@@ -146,5 +146,5 @@ class ResendOTPSerializer(serializers.Serializer):
 class SuspendUserSerializer(serializers.Serializer):
     """Serializer to suspend a user"""
 
-    username = serializers.CharField(max_length=255, required=True)
     is_active = serializers.BooleanField(required=True)
+    
