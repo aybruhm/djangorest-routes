@@ -20,6 +20,7 @@ from rest_routes.serializers import (
     ResendOTPSerializer,
     ResetPasswordOTPSerializer,
     UserLoginObtainPairSerializer,
+    UserSerializer,
 )
 from rest_routes.otp_verifications import OTPVerification
 
@@ -240,6 +241,35 @@ class ResendUserOTP(views.APIView):
                 )
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
+
+class SuspendUser(views.APIView):
+    user_serializer = UserSerializer
+    
+    def get_single_user(self, email:str) -> Response:
+        
+        try:
+            user = User.objects.get(email=email)
+            return user
+        except User.DoesNotExist:
+            payload = error_response(
+                status="error",
+                message="User does not exist!"
+            )
+            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+        
+    def get(self, request:HttpRequest, email:str) -> Response:
+        user = self.get_single_user(email=email)
+        serializer = self.user_serializer(user)
+        
+        payload = success_response(
+            status="success",
+            message="User retrieved!",
+            data=serializer.data
+        )
+        return Response(data=payload, status=status.HTTP_200_OK)
+    
+    def put(self, request:HttpRequest, email:str) -> Response:
+        pass
 
 # class SuspendUserApiView(views.APIView):
 #     permissions_classes = [IsAuthenticated]
