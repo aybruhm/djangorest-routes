@@ -1,6 +1,5 @@
-from django.contrib.auth.decorators import permission_required, login_required
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest
-from rest_framework.permissions import BasePermission
 
 
 @login_required
@@ -14,6 +13,5 @@ def can_suspend_user_perm(request:HttpRequest):
     """
     
     if request.user.has_perm("user.can_suspend_user"):
-        # Suspend user logic
         return True
     return False
