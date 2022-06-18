@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
+from rest_routes.permissions import can_suspend_user_perm
+
 
 """Third Party Imports"""
 from rest_api_payload import success_response, error_response
@@ -19,6 +21,7 @@ from rest_routes.serializers import (
     OTPSerializer,
     ResendOTPSerializer,
     ResetPasswordOTPSerializer,
+    SuspendUserSerializer,
     UserLoginObtainPairSerializer,
     UserSerializer,
 )
@@ -243,7 +246,9 @@ class ResendUserOTP(views.APIView):
 
 
 class SuspendUser(views.APIView):
+    permissions_classes = [IsAuthenticated]
     user_serializer = UserSerializer
+    suspend_user_serializer = SuspendUserSerializer
     
     def get_single_user(self, email:str) -> Response:
         
@@ -269,93 +274,58 @@ class SuspendUser(views.APIView):
         return Response(data=payload, status=status.HTTP_200_OK)
     
     def put(self, request:HttpRequest, email:str) -> Response:
-        pass
-
-# class SuspendUserApiView(views.APIView):
-#     permissions_classes = [IsAuthenticated]
-
-#     def get_single_user(self, email:str) -> Response:
-
-#         try:
-#             user = User.objects.get(is_active=True, email=email)
-#             return user
-#         except User.DoesNotExist:
-#             payload = error_response(
-#                 status="failed",
-#                 message="User does not exist!"
-#             )
-#             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-
-#     def get(self, request:HttpRequest, email:str) -> Response:
-#         user = self.get_single_user(email=email)
-#         serializer = SuspendUserSerializer(user)
-
-#         payload = success_response(
-#             status="success",
-#             message="User retrieved!",
-#             data=serializer.data
-#         )
-#         return Response(data=payload, status=status.HTTP_200_OK)
-
-#     def put(self, request:HttpRequest, email:str) -> Response:
-#         user = self.get_single_user(email=email)
-#         serializer = SuspendUserSerializer(data=request.data, instance=user)
-
-#         # Serialized data from the serializer
-#         serialized_email = serializer.initial_data.get("email")
-#         serialized_active_flag = serializer.initial_data.get("is_staff")
-
-#         # Logic to check if the user request has the following perms
-#         # -> is_staff, is_active, is_authenticated, has_checker_perm
-#         user_has_checker_perm = has_controller_perm_func(request.user)
-
-#         # Check if the serializer is valid and
-#         # the user making the request has controller permission
-#         if serializer.is_valid() == user_has_checker_perm is True:
-
-#             # Checks if the serialized is_active flag is set to True and;
-#             # the serialized email is equal to the user email
-#             if serialized_active_flag is True and serialized_email is user.email:
-
-#                 # Suspend the user
-#                 user.is_active = False
-#                 user.save()
-
-#                 # Custom payload
-#                 payload = success_response(
-#                     status="success",
-#                     message="User successfully suspended!",
-#                     data=serializer.data
-#                 )
-#                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
-
-#             # Checks if the serialized is_active flag is set to False and;
-#             # the serialized email is equal to the user email
-#             elif serialized_active_flag is False and serialized_email is user.email:
-
-#                 # Activate the user
-#                 user.is_active = True
-#                 user.save()
-
-#                 # Custom payload
-#                 payload = success_response(
-#                     status="success",
-#                     message="User successfully activated!",
-#                     data=serializer.data
-#                 )
-#                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
-
-#             payload = error_response(
-#                 success="failed",
-#                 message="User does not have the required permission to perform this action!"
-#             )
-#             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-
-#         payload = error_response(
-#             status="failed",
-#             message="Something went wrong. Please try again!"
-#         )
-#         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+        user = self.get_single_user(email=email)
+        serializer = self.suspend_user_serializer(user, data=request.data)
+        
+        """
+        Check if the serializer is valid and the user 
+        making the request has permission to suspend a user
+        """
+        if serializer.is_valid() == True and can_suspend_user_perm(request=request) == True:
+            
+            is_active = serializer.validated_data.get("is_active")
+            
+            if is_active == False:
+                
+                user.is_active = False
+                user.save()
+            
+                payload = success_response(
+                    status="success",
+                    message="User has been suspended!",
+                    data={
+                        "user": self.user_serializer(user).data,
+                        "user_meta": serializer.data
+                    }
+                )
+                return Response(data=payload, status=status.HTTP_202_ACCEPTED)
+            
+            elif is_active == True:
+                
+                user.is_active = True
+                user.save()
+                
+                payload = success_response(
+                    status="success",
+                    message="User has been activated!",
+                    data=serializer.data
+                )
+                return Response(data=payload, status=status.HTTP_202_ACCEPTED)
+        
+        elif can_suspend_user_perm(request.user) == False:
+            
+            payload = error_response(
+                success="error",
+                message="You don't have the required permission to perform this action!"
+            )
+            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+          
+        else:  
+            payload = error_response(
+                status="error",
+                message=serializer.errors
+            )
+            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChangeUserPassword(views.APIView):
