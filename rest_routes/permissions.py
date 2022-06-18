@@ -4,7 +4,7 @@ from rest_framework.permissions import BasePermission
 
 
 @login_required
-def suspend_user(request:HttpRequest):
+def can_suspend_user_perm(request:HttpRequest):
     """
     If the user has the permission to suspend a user, then suspend the user
     
@@ -17,14 +17,3 @@ def suspend_user(request:HttpRequest):
         # Suspend user logic
         return True
     return False
-
-
-class SuspendUserPerm(BasePermission):
-    
-    def has_permission(self, request, view):
-        pass
-    
-    def has_object_permission(self, request, view, obj):
-        if obj.has_perm("user.can_suspend_user"):
-            
-            pass
