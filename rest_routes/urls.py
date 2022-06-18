@@ -7,6 +7,7 @@ from rest_routes.views import (
     ChangeUserPassword,
     Hello,
     LogUserOut,
+    SuspendUser,
     email_otp_verify,
     ResetUserPasswordOTPAPIView,
     ConfirmResetUserPasswordOTPAPIView,
@@ -39,7 +40,7 @@ urlpatterns = [
         ResetUserPasswordOTPCompleteAPIView.as_view(),
         name="password_reset_otp_confirm",
     ),
-    # path("suspend_user/<str:email>/", SuspendUserApiView.as_view(), name="suspend_user"),
+    path("suspend_user/<str:email>/", SuspendUser.as_view(), name="suspend_user"),
     path(
         "change_password/<str:email>/",
         ChangeUserPassword.as_view(),
