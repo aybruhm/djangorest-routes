@@ -6,22 +6,33 @@ Change Log
 - First Release
 
 1.1 (01/04/2022)
+------------------------
 - Bump version to 1.1
 - Update documentation
 
 1.2 (02/04/2022)
+-----------------------------
 - Rename app to rest_routes
 - Update documentation
 - Bump version to 1.2
 - Fix ModuleNotFound error
 
-v1.2.1 (02/04/2022)
+1.2.1 (02/04/2022)
+----------------------------------
 - Removed djangoresetpassword app
 - Update documentation
 
 1.2.2 (03/04/2022)
+------------------------------
 - Bump version to 1.2.2
 - Add User model to admin
 - Include SALT_KEY for OTP hashing
 - Update documentation
 - Change response (success and error) messages
+
+1.2.3 (19/06/2022)
+------------------------------
+- Bump version to 1.2.3
+- Worked on the suspend user functionality
+- Refactor Oniichan to User
+- Update documentation
