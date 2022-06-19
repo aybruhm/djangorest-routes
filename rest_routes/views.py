@@ -312,10 +312,10 @@ class SuspendUser(views.APIView):
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
         
-        elif can_suspend_user_perm(request.user) == False:
+        elif can_suspend_user_perm(request=request) == False:
             
             payload = error_response(
-                success="error",
+                status="error",
                 message="You don't have the required permission to perform this action!"
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
