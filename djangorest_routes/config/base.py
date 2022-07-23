@@ -188,3 +188,6 @@ AUTH_USER_MODEL = "rest_routes.User"
 
 # Rest Routes Configuration
 OTP_LENGTH = 6
+
+# Register User model in admin
+REGISTER_USER_MODEL = True
