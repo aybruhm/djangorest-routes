@@ -36,3 +36,10 @@ Change Log
 - Worked on the suspend user functionality
 - Refactor Oniichan to User
 - Update documentation
+
+1.2.4 (23/08/2022)
+------------------------------
+- Set phone_number field to be nullable
+- Integrate django-sotp and include in install_requires
+- Update README.md
+- Bump version to 1.2.4
