@@ -67,6 +67,7 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "sotp",
+    "django_apscheduler",
 ]
 
 INSTALLED_APPS = LOCAL_APPS + OWN_APPS + THIRD_PARTY_APPS
