@@ -66,6 +66,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
     "corsheaders",
+    "sotp",
 ]
 
 INSTALLED_APPS = LOCAL_APPS + OWN_APPS + THIRD_PARTY_APPS
@@ -191,3 +192,7 @@ OTP_LENGTH = 6
 
 # Register User model in admin
 REGISTER_USER_MODEL = True
+
+# SOTP Defintion
+SOTP_TIME_EXPIRATION = 5
+SOTP_FROM_EMAIL = "noreply@email.com"
