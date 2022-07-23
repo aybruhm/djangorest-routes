@@ -13,12 +13,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
     username = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=11, unique=True, default=0)
+    phone_number = models.CharField(max_length=11, null=True)
     email = models.EmailField(db_index=True, unique=True)
     otp_code = HashidField(
-        salt=settings.SALT_KEY if settings.SALT_KEY else HASH_FIELD_SALT, 
-        min_length=settings.OTP_LENGTH if settings.OTP_LENGTH else 6, 
-        unique=True, blank=True, null=True
+        salt=settings.SALT_KEY if settings.SALT_KEY else HASH_FIELD_SALT,
+        min_length=settings.OTP_LENGTH if settings.OTP_LENGTH else 6,
+        unique=True,
+        blank=True,
+        null=True,
     )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
