@@ -8,10 +8,11 @@ from django.contrib.auth import get_user_model
 from rest_routes.utils import send_html_to_email
 
 # Third Imports
-
+from sotp.services import GenerateSOTP
 
 
 User = get_user_model()
+otp = GenerateSOTP()
 
 
 class OTPVerification:
@@ -35,8 +36,8 @@ class OTPVerification:
         if user:
 
             """Generates an OTP code for the user"""
-            user_otp = "".join(choices(self.DIGITS * 2, k=6))
-            user.otp_code = user_otp
+            user_otp = otp.generate_otp(user_email=user_email)
+            user.otp_code = user_otp["OTP"]
 
             """Saves otp code"""
             user.save()
@@ -122,4 +123,3 @@ class OTPVerification:
             user.otp_code = ""
             user.save()
             return True
-
