@@ -54,6 +54,7 @@ Quick Start
     INSTALLED_APPS = [
         ...
         'rest_routes',
+        'sotp',
     ]
 ```
 
@@ -79,7 +80,9 @@ SALT_KEY = "some-secured-salt-key-for-otp-hashing"
 
 7. Run ``python manage.py migrate`` to create the `djangorest_routes` models.
 
-8. Start the development server and visit http://127.0.0.1:8000/rest_routes/
+8. See [documentation](https://github.com/israelabraham/django-sotp#readme) for django-sotp.
+
+9. Start the development server and visit http://127.0.0.1:8000/rest_routes/
 
 
 Documentation & Support
@@ -103,3 +106,4 @@ Special thanks goes to the beautiful brains of the below listed packages. From y
 - [djangorestframework](https://github.com/encode/django-rest-framework)
 - [djangorestframework-simplejwt](https://github.com/jazzband/djangorestframework-simplejwt)
 - [rest-api-payload](https://github.com/israelabraham/api-payload)
+- [django-sotp](https://github.com/israelabraham/django-sotp)
