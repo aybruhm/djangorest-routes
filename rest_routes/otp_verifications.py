@@ -1,7 +1,14 @@
+# Native Imports
 from random import choices
+
+# Django Imports
 from django.contrib.auth import get_user_model
 
+# Rest Routes Imports
 from rest_routes.utils import send_html_to_email
+
+# Third Imports
+
 
 
 User = get_user_model()
@@ -116,20 +123,3 @@ class OTPVerification:
             user.save()
             return True
 
-    def destroy_otp_code(self, email: str):
-        """
-        This function destroys the otp code of the user
-
-        :param email: The email of the user you want to get the otp code for
-        :type email: str
-        :return: The otp_code is being returned.
-        """
-
-        """Get user email"""
-        user = User.objects.get(email=email)
-
-        """Destroys user otp code"""
-        user.otp_code = ""
-        user.save()
-        otp_code = user.otp_code
-        return otp_code
