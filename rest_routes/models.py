@@ -30,7 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["firstname", "lastname", "phone_number", "username"]
 
-    """Set User objeccts manager to UserManager"""
+    """Set User objects manager to UserManager"""
     objects = UserManager()
 
     def __str__(self):
