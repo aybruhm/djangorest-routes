@@ -14,7 +14,8 @@ Abstract
 -----------
 A reliable and trustworthy authentication library made for anyone who's a tinkerer and wants to get their personal or professional project authentication infrastructure built in no time.
 
-![djangorest-routes](https://user-images.githubusercontent.com/55067204/161224355-7a6c59cc-9d14-4a9c-a861-19f2e7682688.png)
+![djangorest-routes-api-docs](https://user-images.githubusercontent.com/55067204/185800448-a5ce0814-0228-47a4-8030-293d30b3d793.png)
+
 
 
 Routes
