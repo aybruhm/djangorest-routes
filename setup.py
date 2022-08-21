@@ -10,7 +10,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
  
 setup(
     name = 'djangorest_routes',
-    version = '1.2.4',
+    version = '1.2.5',
     packages = find_packages(),
     include_package_data = True,
     license = 'MIT License',
@@ -61,6 +61,7 @@ setup(
         "djang-sotp",
         "django-cors-headers",
         "django-hashid-field",
+        "drf-yasg",
     ],
 )
 
