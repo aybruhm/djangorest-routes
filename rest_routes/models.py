@@ -10,9 +10,9 @@ HASH_FIELD_SALT = "xj-mnplwwfxqg%3deo&worodl4h2$z5izs!(lxh*&bp%ch_"
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.BigAutoField(auto_created=True, primary_key=True)
-    firstname = models.CharField(max_length=255)
-    lastname = models.CharField(max_length=255)
-    username = models.CharField(max_length=255)
+    firstname = models.CharField(max_length=255, default="")
+    lastname = models.CharField(max_length=255, default="")
+    username = models.CharField(max_length=255, default="")
     phone_number = models.CharField(max_length=11, null=True)
     email = models.EmailField(db_index=True, unique=True)
     otp_code = HashidField(
