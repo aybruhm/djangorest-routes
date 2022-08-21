@@ -260,22 +260,27 @@ class SuspendUser(views.APIView):
             user = User.objects.get(email=email)
             return user
         except User.DoesNotExist:
+            return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def get(self, request:HttpRequest, email:str) -> Response:
+        user = self.get_single_user(email=email)
+        
+        if user.status_code == 400:
             payload = error_response(
                 status="error",
                 message="User does not exist!"
             )
-            return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=payload, status=status.HTTP_200_OK)
         
-    def get(self, request:HttpRequest, email:str) -> Response:
-        user = self.get_single_user(email=email)
-        serializer = self.user_serializer(user)
-        
-        payload = success_response(
-            status="success",
-            message="User retrieved!",
-            data=serializer.data
-        )
-        return Response(data=payload, status=status.HTTP_200_OK)
+        else:    
+            serializer = self.user_serializer(user)
+            
+            payload = success_response(
+                status="success",
+                message="User retrieved!",
+                data=serializer.data
+            )
+            return Response(data=payload, status=status.HTTP_200_OK)
     
     @swagger_auto_schema(request_body=suspend_user_serializer)
     def put(self, request:HttpRequest, email:str) -> Response:
@@ -351,7 +356,8 @@ class ChangeUserPassword(views.APIView):
             return user
         except User.DoesNotExist:
             payload = error_response(
-                status="failed", message="Credentials does not match our record!"
+                status="error",
+                message="User does not exist!"
             )
             return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
 
@@ -360,6 +366,7 @@ class ChangeUserPassword(views.APIView):
 
         """Get current logged in user"""
         user = self.get_current_user(email=email)
+
         serializer = self.serializer_class(user, data=request.data)
 
         if serializer.is_valid():
