@@ -1,4 +1,3 @@
-from typing import Type
 from django.contrib.auth.base_user import BaseUserManager
 
 
@@ -23,7 +22,7 @@ class UserManager(BaseUserManager):
             raise TypeError("User must have a phone number")
         
         if username is None:
-            raise Type("User must have a username")
+            raise TypeError("User must have a username")
 
         user = self.model(
             firstname=firstname,

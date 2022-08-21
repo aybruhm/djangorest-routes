@@ -213,7 +213,7 @@ class ResendUserOTP(views.APIView):
             user = self.get_user(email=otp_data.get("email"))
 
             """Check if a user active and email active flag is True"""
-            if user.is_active == True and user.is_email_active == True:
+            if user.is_active and user.is_email_active:
 
                 payload = success_response(
                     status="success", message="You are already verified!", data={}
