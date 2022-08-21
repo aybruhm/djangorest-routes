@@ -1,18 +1,18 @@
-"""Rest Framework Imports"""
+# Rest Framework Imports
 from rest_framework import status, views
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
-from rest_routes.permissions import can_suspend_user_perm
+# DRF YASG Imports
+from drf_yasg.utils import swagger_auto_schema
 
-
-"""Third Party Imports"""
+# Third Party Imports
 from rest_api_payload import success_response, error_response
 
 
-"""Custom app -> Rest Auth Imports"""
+# Rest Auth Imports
 from rest_routes.utils import send_html_to_email
 from rest_routes.serializers import (
     CompleteResetPasswordOTPSerializer,
@@ -25,6 +25,7 @@ from rest_routes.serializers import (
     UserLoginObtainPairSerializer,
     UserSerializer,
 )
+from rest_routes.permissions import can_suspend_user_perm
 from rest_routes.otp_verifications import OTPVerification
 
 
@@ -75,6 +76,7 @@ class RegisterUser(views.APIView):
     serializer_class = RegisterUserSerializer
     permission_classes = [AllowAny]
 
+    @swagger_auto_schema(request_body=serializer_class)
     def post(self, request: HttpRequest) -> Response:
         """
         It creates a new user.
@@ -115,6 +117,7 @@ class ConfirmUserOTP(views.APIView):
     serializer_class = OTPSerializer
     permission_classes = [AllowAny]
 
+    @swagger_auto_schema(request_body=serializer_class)
     def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
 
@@ -201,6 +204,7 @@ class ResendUserOTP(views.APIView):
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(request_body=serializer_class)
     def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
 
@@ -250,7 +254,7 @@ class SuspendUser(views.APIView):
     user_serializer = UserSerializer
     suspend_user_serializer = SuspendUserSerializer
     
-    def get_single_user(self, email:str) -> Response:
+    def get_single_user(self, email:str):
         
         try:
             user = User.objects.get(email=email)
@@ -273,6 +277,7 @@ class SuspendUser(views.APIView):
         )
         return Response(data=payload, status=status.HTTP_200_OK)
     
+    @swagger_auto_schema(request_body=suspend_user_serializer)
     def put(self, request:HttpRequest, email:str) -> Response:
         user = self.get_single_user(email=email)
         serializer = self.suspend_user_serializer(user, data=request.data)
@@ -350,6 +355,7 @@ class ChangeUserPassword(views.APIView):
             )
             return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
 
+    @swagger_auto_schema(request_body=serializer_class)
     def put(self, request: HttpRequest, email: str) -> Response:
 
         """Get current logged in user"""
@@ -410,6 +416,7 @@ class ResetUserPasswordOTPAPIView(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = ResetPasswordOTPSerializer
 
+    @swagger_auto_schema(request_body=serializer_class)
     def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
 
@@ -444,6 +451,7 @@ class ConfirmResetUserPasswordOTPAPIView(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = OTPSerializer
 
+    @swagger_auto_schema(request_body=serializer_class)
     def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
 
@@ -496,6 +504,7 @@ class ResetUserPasswordOTPCompleteAPIView(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = CompleteResetPasswordOTPSerializer
 
+    @swagger_auto_schema(request_body=serializer_class)
     def post(self, request: HttpRequest) -> Response:
         serializer = self.serializer_class(data=request.data)
 
@@ -548,14 +557,9 @@ class LogUserOut(views.APIView):
     Removes the authenticated user's ID from the request and flushes their
     session data.
     """
-
-    response = Response()
-
+    
     def post(self, request: HttpRequest) -> Response:
-
-        """Flush out user's session from the client side"""
-        request.session.flush()
-
+        
         """Wipes user request"""
         logout(request)
 
