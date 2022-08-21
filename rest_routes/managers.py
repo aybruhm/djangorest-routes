@@ -16,11 +16,11 @@ class UserManager(BaseUserManager):
         """Creates normal user"""
 
         if email is None:
-            raise TypeError("Users must have an email address")
+            raise TypeError("User must have an email address")
 
         if phone_number is None:
             raise TypeError("User must have a phone number")
-        
+
         if username is None:
             raise TypeError("User must have a username")
 
@@ -49,12 +49,6 @@ class UserManager(BaseUserManager):
 
         if firstname is None:
             raise TypeError("Users must have a Firstname")
-
-        if email is None:
-            raise TypeError("Users must have an email address")
-
-        if phone_number is None:
-            raise TypeError("User must have a phone number")
 
         if password is None:
             raise TypeError("Superusers must have a password.")
