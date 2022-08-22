@@ -102,18 +102,15 @@ class ChangeUserPasswordSerializer(serializers.Serializer):
         style={"input_type": "password", "placeholder": "Repeat New Password"},
     )
     
-    def validate(self, attrs):
-
-        # Get email address from attributes
-        email = attrs.get("email")
+    def validate_email(self, value):
         
         # Checks if user exists
-        user = User.objects.filter(email=email).exists()
+        user = User.objects.filter(email=value).exists()
         
         if not user:
             raise serializers.ValidationError("Email address does not exist!")
-
-        return super().validate(attrs)
+        
+        return value
     
 
 class ResetPasswordOTPSerializer(serializers.Serializer):
@@ -121,18 +118,15 @@ class ResetPasswordOTPSerializer(serializers.Serializer):
 
     email = serializers.EmailField(max_length=255, required=True)
     
-    def validate(self, attrs):
-
-        # Get email address from attributes
-        email = attrs.get("email")
+    def validate_email(self, value):
         
         # Checks if user exists
-        user = User.objects.filter(email=email).exists()
+        user = User.objects.filter(email=value).exists()
         
         if not user:
             raise serializers.ValidationError("Email address does not exist!")
         
-        return super().validate(attrs)
+        return value
 
 
 class CompleteResetPasswordOTPSerializer(serializers.Serializer):
@@ -160,18 +154,15 @@ class OTPSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255, required=True)
     otp_code = serializers.CharField(required=True, max_length=6)
     
-    def validate(self, attrs):
-
-        # Get email address from attributes
-        email = attrs.get("email")
+    def validate_email(self, value):
         
         # Checks if user exists
-        user = User.objects.filter(email=email).exists()
+        user = User.objects.filter(email=value).exists()
         
         if not user:
             raise serializers.ValidationError("Email address does not exist!")
         
-        return super().validate(attrs)
+        return value
 
 
 class ResendOTPSerializer(serializers.Serializer):
@@ -179,18 +170,15 @@ class ResendOTPSerializer(serializers.Serializer):
 
     email = serializers.EmailField(max_length=255, required=True)
     
-    def validate(self, attrs):
-
-        # Get email address from attributes
-        email = attrs.get("email")
+    def validate_email(self, value):
         
         # Checks if user exists
-        user = User.objects.filter(email=email).exists()
+        user = User.objects.filter(email=value).exists()
         
         if not user:
             raise serializers.ValidationError("Email address does not exist!")
         
-        return super().validate(attrs)
+        return value
 
 
 class SuspendUserSerializer(serializers.Serializer):
