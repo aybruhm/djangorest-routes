@@ -1,11 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:v="urn:schemas-microsoft-com:vml">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
-    
-    <!--[if !mso]--><!-- -->
+
+    <!--[if !mso]-->
+    <!-- -->
     <link href='https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,600,700' rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel="stylesheet">
     <!--<![endif]-->
@@ -48,56 +50,71 @@
             font-size: 14px;
             border: 0;
         }
+
         /* ----------- responsivity ----------- */
 
         @media only screen and (max-width: 640px) {
+
             /*------ top header ------ */
             .main-header {
                 font-size: 20px !important;
             }
+
             .main-section-header {
                 font-size: 28px !important;
             }
+
             .show {
                 display: block !important;
             }
+
             .hide {
                 display: none !important;
             }
+
             .align-center {
                 text-align: center !important;
             }
+
             .otp__table {
                 padding: 40px !important;
                 padding-top: 120px !important;
             }
+
             .no-bg {
                 background: none !important;
             }
+
             /*----- main image -------*/
             .main-image img {
                 width: 440px !important;
                 height: auto !important;
             }
+
             /* ====== divider ====== */
             .divider img {
                 width: 440px !important;
             }
+
             /*-------- container --------*/
             .container590 {
                 width: 440px !important;
             }
+
             .container580 {
                 width: 400px !important;
             }
+
             .main-button {
                 width: 220px !important;
             }
+
             /*-------- secions ----------*/
             .section-img img {
                 width: 320px !important;
                 height: auto !important;
             }
+
             .team-img img {
                 width: 100% !important;
                 height: auto !important;
@@ -105,28 +122,35 @@
         }
 
         @media only screen and (max-width: 479px) {
+
             /*------ top header ------ */
             .main-header {
                 font-size: 18px !important;
             }
+
             .main-section-header {
                 font-size: 26px !important;
             }
+
             /* ====== divider ====== */
             .divider img {
                 width: 280px !important;
             }
+
             /*-------- container --------*/
             .container590 {
                 width: 280px !important;
             }
+
             .container590 {
                 width: 280px !important;
             }
+
             .container580 {
                 width: 260px !important;
             }
-            /*-------- secions ----------*/
+
+            /*-------- sections ----------*/
             .section-img img {
                 width: 280px !important;
                 height: auto !important;
@@ -138,24 +162,15 @@
                 padding: 40px !important;
                 padding-top: 180px !important;
             }
-            
+
         }
     </style>
-    <!--[if gte mso 9]><style type=”text/css”>
-        body {
-        font-family: arial, sans-serif!important;
-        }
-        </style>
-    <![endif]-->
 
     <title>{% block title %}{% endblock title %}</title>
 </head>
 
 <body class="respond" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+    {% block content %}{% endblock content %}
+</body>
 
-    {% block content %}
-      
-    {% endblock content %}
-
-  </body>
 </html>
