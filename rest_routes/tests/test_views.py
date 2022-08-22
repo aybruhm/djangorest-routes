@@ -1,73 +1,60 @@
 import json
+from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 
+# User model Imports
+from rest_routes.models import User
 
-class AuthUserTestCase(APITestCase):
-    """
-    The test_post method tests the post request to the register endpoint.
-    The test_bad_request method tests the post request to the register endpoint with missing fields
-    """
 
-    def test_Hello(self):
-        response = self.client.get("http://127.0.0.1:8000/rest_routes/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+class AuthenticationTestCase(APITestCase):
 
-    def test_user_register(self):
+    def test_register_user(self):
+        """
+        Ensure we can create a new user object.
+        """
+        
+        url = reverse("authentication:register_user")
         data = {
-            "firstname": "israel",
-            "lastname": "abraham",
+            "firstname": "Israel",
+            "lastname": "Abraham",
             "username": "abram",
-            "password": "somereallystrongpassword",
-            "phone_number": "08137281916",
+            "password": "somereally_strongpassword_2002",
+            "phone_number": "09012345654",
             "email": "abram@test.com",
         }
-        response = self.client.post("http://127.0.0.1:8000/rest_routes/register/", data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_register_bad_request(self):
-        data = {
-            "username": "abram",
-            "password": "somereallystrongpassword",
-            "phone_number": "08137281916",
-            "email": "abram@test.com",
-        }
-        response = self.client.post("http://127.0.0.1:8000/rest_routes/register/", data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    # def test_resend_User_otp(self):
-    #     data = {"email": "israelvictory87@gmail.com"}
-    #     response = self.client.post("http://127.0.0.1:8000/rest_routes/resend_otp_code/", data=data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_resend_User_otp_bad_request(self):
-        data = {"email": "abram@hello.com"}
-        response = self.client.post(
-            "http://127.0.0.1:8000/rest_routes/resend_otp_code/", data
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.data,
-            {"status": "failed", "message": "Credentials does not match our record!"},
-        )
-
-    def test_confirm_otp_bad_request(self):
-        data = {"email": "abram@test.com", "otp_code": "453521"}
-        response = self.client.post(
-            "http://127.0.0.1:8000/rest_routes/confirm_otp/", data
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_logout(self):
-        response = self.client.post("http://127.0.0.1:8000/rest_routes/logout/")
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-
-    def test_email_otp_verify_page(self):
-        response = self.client.get("http://127.0.0.1:8000/rest_routes/otp_verify/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "emails/authentication/otp_verify.html")
-
-    def test_welcome_user_page(self):
-        response = self.client.get("http://127.0.0.1:8000/rest_routes/welcome/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "emails/users/welcome.html")
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.get().username, "abram")
+        self.assertEqual(User.objects.get().email, "abram@test.com")
+        
+    def test_login_user(self):
+        pass
+    
+    def test_refresh_login_user(self):
+        pass
+    
+    def test_confirm_user_otp(self):
+        pass
+    
+    def test_resend_user_otp(self):
+        pass
+    
+    def test_suspend_user(self):
+        pass
+    
+    def test_change_user_password(self):
+        pass
+    
+    def test_reset_user_password_otp(self):
+        pass
+    
+    def test_confirm_user_password_otp(self):
+        pass
+    
+    def test_reset_user_password_otp_complete(self):
+        pass
+    
+    def test_log_user_out(self):
+        pass
