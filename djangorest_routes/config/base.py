@@ -136,6 +136,11 @@ TEMPLATES = [
         "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
+            
+            # required for coverage plugin
+            'debug': True,
+            
+            # comes default from django
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
