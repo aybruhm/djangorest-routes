@@ -37,9 +37,16 @@ Change Log
 - Refactor Oniichan to User
 - Update documentation
 
-1.2.4 (23/08/2022)
+1.2.4 (23/06/2022)
 ------------------------------
 - Set phone_number field to be nullable
 - Integrate django-sotp and include in install_requires
 - Update README.md
 - Bump version to 1.2.4
+
+1.2.5 (22/08/2022)
+-------------------------------
+- Added field level validation to serializers
+- Document APIs with swagger (openapi)
+- Update README.md
+- Bump version to 1.2.5
