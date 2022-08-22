@@ -104,12 +104,34 @@ class ChangeUserPasswordSerializer(serializers.Serializer):
         required=True,
         style={"input_type": "password", "placeholder": "Repeat New Password"},
     )
+    
+    def validate(self, attrs):
+
+        # Get email address from attributes
+        email = attrs.get("email")
+        
+        # Checks if user exists
+        user = User.objects.filter(email=email).exists()
+        
+        if not user:
+            raise ValueError("User does not exist!")
 
 
 class ResetPasswordOTPSerializer(serializers.Serializer):
     """Serializer to reset password using OTP"""
 
     email = serializers.EmailField(max_length=255, required=True)
+    
+    def validate(self, attrs):
+
+        # Get email address from attributes
+        email = attrs.get("email")
+        
+        # Checks if user exists
+        user = User.objects.filter(email=email).exists()
+        
+        if not user:
+            raise ValueError("User does not exist!")
 
 
 class CompleteResetPasswordOTPSerializer(serializers.Serializer):
@@ -128,6 +150,7 @@ class CompleteResetPasswordOTPSerializer(serializers.Serializer):
         required=True,
         style={"input_type": "password", "placeholder": "Confirm Password"},
     )
+    
 
 
 class OTPSerializer(serializers.Serializer):
@@ -135,16 +158,38 @@ class OTPSerializer(serializers.Serializer):
 
     email = serializers.EmailField(max_length=255, required=True)
     otp_code = serializers.CharField(required=True, max_length=6)
+    
+    def validate(self, attrs):
+
+        # Get email address from attributes
+        email = attrs.get("email")
+        
+        # Checks if user exists
+        user = User.objects.filter(email=email).exists()
+        
+        if not user:
+            raise ValueError("User does not exist!")
 
 
 class ResendOTPSerializer(serializers.Serializer):
     """Serializer to resend OTP code to user's email"""
 
     email = serializers.EmailField(max_length=255, required=True)
+    
+    def validate(self, attrs):
+
+        # Get email address from attributes
+        email = attrs.get("email")
+        
+        # Checks if user exists
+        user = User.objects.filter(email=email).exists()
+        
+        if not user:
+            raise ValueError("User does not exist!")
 
 
 class SuspendUserSerializer(serializers.Serializer):
     """Serializer to suspend a user"""
-
+    
     is_active = serializers.BooleanField(required=True)
     
