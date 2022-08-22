@@ -1,21 +1,18 @@
-"""Django Imports"""
+# Django Imports
 from django.contrib.auth import get_user_model
 
-
-"""Rest Framework Imports"""
+# Rest Framework Imports
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-
-"""Third Party Imports"""
+# Third Party Imports
 from rest_api_payload import success_response
 
-
-"""Custom app -> Rest Auth Imports"""
+# Rest routes Imports
 from rest_routes.otp_verifications import OTPVerification
 
 
-"""Class Instantiations"""
+# Class Instantiations
 otp_verify = OTPVerification()
 User = get_user_model()
 
@@ -114,8 +111,10 @@ class ChangeUserPasswordSerializer(serializers.Serializer):
         user = User.objects.filter(email=email).exists()
         
         if not user:
-            raise ValueError("User does not exist!")
+            raise serializers.ValidationError("Email address does not exist!")
 
+        return super().validate(attrs)
+    
 
 class ResetPasswordOTPSerializer(serializers.Serializer):
     """Serializer to reset password using OTP"""
@@ -131,7 +130,9 @@ class ResetPasswordOTPSerializer(serializers.Serializer):
         user = User.objects.filter(email=email).exists()
         
         if not user:
-            raise ValueError("User does not exist!")
+            raise serializers.ValidationError("Email address does not exist!")
+        
+        return super().validate(attrs)
 
 
 class CompleteResetPasswordOTPSerializer(serializers.Serializer):
@@ -168,7 +169,9 @@ class OTPSerializer(serializers.Serializer):
         user = User.objects.filter(email=email).exists()
         
         if not user:
-            raise ValueError("User does not exist!")
+            raise serializers.ValidationError("Email address does not exist!")
+        
+        return super().validate(attrs)
 
 
 class ResendOTPSerializer(serializers.Serializer):
@@ -185,7 +188,9 @@ class ResendOTPSerializer(serializers.Serializer):
         user = User.objects.filter(email=email).exists()
         
         if not user:
-            raise ValueError("User does not exist!")
+            raise serializers.ValidationError("Email address does not exist!")
+        
+        return super().validate(attrs)
 
 
 class SuspendUserSerializer(serializers.Serializer):
