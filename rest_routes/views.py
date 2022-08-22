@@ -95,7 +95,7 @@ class RegisterUser(views.APIView):
                 message="An OTP code has been sent to your email address!",
                 data=serializer.data,
             )
-            return Response(data=payload, status=status.HTTP_200_OK)
+            return Response(data=payload, status=status.HTTP_201_CREATED)
 
         payload = error_response(status="failed", message=serializer.errors)
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
@@ -253,88 +253,83 @@ class SuspendUser(views.APIView):
     permissions_classes = [IsAuthenticated]
     user_serializer = UserSerializer
     suspend_user_serializer = SuspendUserSerializer
-    
-    def get_single_user(self, email:str):
-        
+
+    def get_single_user(self, email: str):
+
         try:
             user = User.objects.get(email=email)
             return user
         except User.DoesNotExist:
             return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
-        
-    def get(self, request:HttpRequest, email:str) -> Response:
+
+    def get(self, request: HttpRequest, email: str) -> Response:
         user = self.get_single_user(email=email)
-        
+
         if user.status_code == 400:
-            payload = error_response(
-                status="error",
-                message="User does not exist!"
-            )
+            payload = error_response(status="error", message="User does not exist!")
             return Response(data=payload, status=status.HTTP_200_OK)
-        
-        else:    
+
+        else:
             serializer = self.user_serializer(user)
-            
+
             payload = success_response(
-                status="success",
-                message="User retrieved!",
-                data=serializer.data
+                status="success", message="User retrieved!", data=serializer.data
             )
             return Response(data=payload, status=status.HTTP_200_OK)
-    
+
     @swagger_auto_schema(request_body=suspend_user_serializer)
-    def put(self, request:HttpRequest, email:str) -> Response:
+    def put(self, request: HttpRequest, email: str) -> Response:
         user = self.get_single_user(email=email)
         serializer = self.suspend_user_serializer(user, data=request.data)
-        
+
         """
         Check if the serializer is valid and the user 
         making the request has permission to suspend a user
         """
-        if serializer.is_valid() == True and can_suspend_user_perm(request=request) == True:
-            
+        if (
+            serializer.is_valid() == True
+            and can_suspend_user_perm(request=request) == True
+        ):
+
             is_active = serializer.validated_data.get("is_active")
-            
+
             if is_active == False:
-                
+
                 user.is_active = False
                 user.save()
-            
+
                 payload = success_response(
                     status="success",
                     message="User has been suspended!",
                     data={
                         "user": self.user_serializer(user).data,
-                        "user_meta": serializer.data
-                    }
+                        "user_meta": serializer.data,
+                    },
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
-            
+
             elif is_active == True:
-                
+
                 user.is_active = True
                 user.save()
-                
+
                 payload = success_response(
                     status="success",
                     message="User has been activated!",
-                    data=serializer.data
+                    data=serializer.data,
                 )
                 return Response(data=payload, status=status.HTTP_202_ACCEPTED)
-        
+
         elif can_suspend_user_perm(request=request) == False:
-            
+
             payload = error_response(
                 status="error",
-                message="You don't have the required permission to perform this action!"
+                message="You don't have the required permission to perform this action!",
             )
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
-          
-        else:  
-            payload = error_response(
-                status="error",
-                message=serializer.errors
-            )
+
+        else:
+            payload = error_response(status="error", message=serializer.errors)
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -355,11 +350,7 @@ class ChangeUserPassword(views.APIView):
             user = User.objects.get(is_active=True, email=email)
             return user
         except User.DoesNotExist:
-            payload = error_response(
-                status="error",
-                message="User does not exist!"
-            )
-            return Response(data=payload, status=status.HTTP_404_NOT_FOUND)
+            return Response(data={}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(request_body=serializer_class)
     def put(self, request: HttpRequest, email: str) -> Response:
@@ -419,7 +410,7 @@ class ChangeUserPassword(views.APIView):
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ResetUserPasswordOTPAPIView(views.APIView):
+class ResetUserPasswordOTP(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = ResetPasswordOTPSerializer
 
@@ -454,7 +445,7 @@ class ResetUserPasswordOTPAPIView(views.APIView):
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ConfirmResetUserPasswordOTPAPIView(views.APIView):
+class ConfirmResetUserPasswordOTP(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = OTPSerializer
 
@@ -507,7 +498,7 @@ class ConfirmResetUserPasswordOTPAPIView(views.APIView):
                 return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ResetUserPasswordOTPCompleteAPIView(views.APIView):
+class ResetUserPasswordOTPComplete(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = CompleteResetPasswordOTPSerializer
 
@@ -564,9 +555,9 @@ class LogUserOut(views.APIView):
     Removes the authenticated user's ID from the request and flushes their
     session data.
     """
-    
+
     def post(self, request: HttpRequest) -> Response:
-        
+
         """Wipes user request"""
         logout(request)
 
