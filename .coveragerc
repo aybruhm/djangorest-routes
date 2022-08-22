@@ -1,3 +1,6 @@
 [run]
-omit = *migrations*, *tests*
+omit = 
+    *migrations*
+    *templates*
+    "rest_routes*
 plugins = django_coverage_plugin
