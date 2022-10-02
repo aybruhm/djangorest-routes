@@ -11,7 +11,7 @@ from rest_routes.views import (
     email_otp_verify,
     ResetUserPasswordOTP,
     ConfirmResetUserPasswordOTP,
-    ResetUserPasswordOTPComplete,
+    CompleteResetUserPasswordOTP,
     welcome_user,
 )
 from django.urls import path
@@ -37,7 +37,7 @@ urlpatterns = [
     ),
     path(
         "password_reset_otp/complete/",
-        ResetUserPasswordOTPComplete.as_view(),
+        CompleteResetUserPasswordOTP.as_view(),
         name="password_reset_otp_complete",
     ),
     path("suspend_user/<str:email>/", SuspendUser.as_view(), name="suspend_user"),
