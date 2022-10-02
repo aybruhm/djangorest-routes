@@ -109,3 +109,7 @@ Special thanks goes to the beautiful brains of the below listed packages. From y
 - [drf-yasg](https://github.com/axnsan12/drf-yasg)
 - [rest-api-payload](https://github.com/israelabraham/api-payload)
 - [django-sotp](https://github.com/israelabraham/django-sotp)
+
+## Contributing 
+
+Waiting for the contributing.md file to be updated. 
