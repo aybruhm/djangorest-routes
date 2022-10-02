@@ -38,7 +38,7 @@ urlpatterns = [
     path(
         "password_reset_otp/complete/",
         ResetUserPasswordOTPComplete.as_view(),
-        name="password_reset_otp_confirm",
+        name="password_reset_otp_complete",
     ),
     path("suspend_user/<str:email>/", SuspendUser.as_view(), name="suspend_user"),
     path(
