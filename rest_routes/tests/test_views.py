@@ -7,6 +7,55 @@ from rest_framework import status
 from rest_routes.models import User
 
 
+class BaseTestCase(APITestCase):
+    
+    def setUp(self) -> None:
+        ...
+    
+    @property
+    def bearer_token_login(self):
+        ...
+
+
+class RegisterUserTestCase(APITestCase):
+    ...
+    
+
+class LoginUserTestCase(APITestCase):
+    ...
+    
+
+class ConfirmUserOTPTestCase(APITestCase):
+    ...
+    
+
+class ResendUserOTPTestCase(APITestCase):
+    ...
+    
+
+class SuspendUserTestCase(APITestCase):
+    ...
+    
+
+class ChangeUserPasswordTestCase(APITestCase):
+    ...
+    
+
+class ResetUserPasswordOTPTestCase(APITestCase):
+    ...
+    
+
+class ConfirmResetUserPasswordOTPTestCase(APITestCase):
+    ...
+    
+
+class CompleteResetUserPasswordOTPTestCase(APITestCase):
+    ...
+    
+
+class LogUserOutTestCase(APITestCase):
+    ...
+    
 class AuthenticationTestCase(APITestCase):
 
     def test_register_user(self):
