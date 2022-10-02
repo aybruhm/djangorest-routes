@@ -48,6 +48,7 @@ class PasswordBaseSerializer(BaseSerializer):
         new_password = attrs.get("new_password")
         repeat_password = attrs.get("repeat_new_password")
         
+        # validate if passwords are incorrect
         if new_password != repeat_password:
             raise serializers.ValidationError("Password incorrect. Try again!")
         return super().validate(attrs)
