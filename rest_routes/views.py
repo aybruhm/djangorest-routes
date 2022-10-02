@@ -453,7 +453,7 @@ class ConfirmResetUserPasswordOTP(views.APIView):
             return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ResetUserPasswordOTPComplete(views.APIView):
+class CompleteResetUserPasswordOTP(views.APIView):
     permission_classes = [AllowAny]
     serializer_class = CompleteResetPasswordOTPSerializer
 
